@@ -1,0 +1,17 @@
+gitlabConfig:
+- gitlab_rails['db_adapter'] = "postgresql";
+- gitlab_rails['db_encoding'] = "unicode";
+- gitlab_rails['db_database'] = "GITLAB_POSTGRESQL_DB_DATABASE";
+- gitlab_rails['db_username'] = "GITLAB_POSTGRESQL_DB_USERNAME";
+- gitlab_rails['db_password'] = "GITLAB_POSTGRESQL_DB_PASSWORD";
+- gitlab_rails['db_host'] = "GITLAB_POSTGRESQL_DB_HOST";
+- gitlab_rails['db_port'] = GITLAB_POSTGRESQL_DB_PORT; 
+- gitlab_rails['redis_host'] = "GITLAB_REDIS_HOST";
+- gitlab_rails['redis_port'] = GITLAB_REDIS_PORT;
+- gitlab_rails['redis_ssl'] = false;
+- gitlab_rails['redis_enable_client'] = true;
+- prometheus_monitoring['enable'] = false;
+- redis['enable'] = false;
+- gitlab_rails['gitlab_shell_ssh_port'] = 22;
+- gitlab_rails['backup_keep_time'] = 604800;
+

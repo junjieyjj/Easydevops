@@ -1,0 +1,116 @@
+controller:
+  customInitContainers: 
+    - name: custom-init
+      image: "216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.277.3-lts"
+      imagePullPolicy: Always
+      command: 
+        - "/bin/sh"
+        - "-c"
+        - "[ -d /var/jenkins_home/jenkins-3.3.9-plugins.tar.gz ] && (echo Dir:/var/jenkins_home/plugins is existed) || (cd /var/jenkins_home/; curl -O https://jack-test-devops.s3.ap-east-1.amazonaws.com/jenkins-3.3.9-plugins.tar.gz; tar zxf jenkins-3.3.9-plugins.tar.gz)"
+      resources:
+        limits:
+          cpu: "1"
+          memory: 2Gi
+        requests:
+          cpu: 500m
+          memory: 1Gi
+      volumeMounts:
+      - mountPath: /var/jenkins_home
+        name: jenkins-home
+  initScripts:
+    - |
+      def jcascFile = new File('/var/jenkins_home/casc_configs/jcasc.yaml')
+      jcascFile.delete()
+  JCasC:
+    defaultConfig: true
+    configScripts:
+      jcasc: |
+        jenkins:
+          systemMessage: Welcome to CI\CD server.
+          authorizationStrategy:
+            roleBased:
+              roles:
+                global:
+                  - name: "admin"
+                    description: "Jenkins administrators"
+                    permissions:
+                      - "Overall/Administer"
+                    assignments:
+                      - "admin"
+                  - name: "readonly"
+                    description: "Read-only users"
+                    permissions:
+                      - "Overall/Read"
+                      - "Job/Read"
+                    assignments:
+                      - "authenticated"
+                items:
+                  - name: "FolderA"
+                    description: "Jobs in Folder A, but not the folder itself"
+                    pattern: "A/.*"
+                    permissions:
+                      - "Job/Configure"
+                      - "Job/Build"
+                      - "Job/Delete"
+                    assignments:
+                      - "user1"
+                      - "user2"
+          securityRealm:
+            local:
+              allowsSignup: false
+              users:
+                - id: "admin"
+                  password: "admin"
+          globalNodeProperties:
+          - envVars:
+              env:
+              - key: GITLAB_URL
+                value: http://gitlab.demo.com
+              - key: SONARQUBE_URL
+                value: http://sonarqube.demo.com
+        unclassified:
+          location:
+            adminAddress: demo@example.com
+            url: https://jenkins.example.com
+          globalLibraries:
+            libraries:
+              - name: "shared-pipeline-library"
+                defaultVersion: master
+                retriever:
+                  modernSCM:
+                    scm:
+                      git:
+                        remote: "git@gitlab.demo.com:devops/shared-pipeline-library.git"
+                        credentialsId: gitlab-ssh-key
+          gitlabconnectionconfig:
+            connections:
+              - apiTokenId: gitlab-api-token
+                clientBuilderId: "autodetect"
+                connectionTimeout: 20
+                ignoreCertificateErrors: true
+                name: "gitlab"
+                readTimeout: 10
+                url: "http://gitlab.demo.com"
+          ansiColorBuildWrapper:
+            globalColorMapName: xterm
+        credentials:
+          system:
+            domainCredentials:
+              - domain:
+                  name: "devops"
+                  description: "store devops secrets"
+                credentials:
+                  - basicSSHUserPrivateKey:
+                      scope: GLOBAL
+                      id: gitlab-ssh-key
+                      username: demo
+                      passphrase: ''
+                      description: "gitlab-ssh-key"
+                      privateKeySource:
+                        directEntry:
+                          privateKey: "SSH_PRIVATE_KEY"
+                  - gitLabApiTokenImpl:
+                      scope: SYSTEM
+                      id: gitlab-api-token
+                      apiToken: "BIND_TOKEN"
+                      description: "gitlab-api-token"

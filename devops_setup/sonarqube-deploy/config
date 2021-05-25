@@ -1,0 +1,38 @@
+#!/usr/bin/bash
+# AWS连接信息，不定义则使用环境变量，定义则使用如下定义值
+export AWS_ACCESS_KEY_ID=AKIATETRFRPDKSP5G7FT
+export AWS_SECRET_ACCESS_KEY=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
+export AWS_DEFAULT_REGION=ap-east-1
+export EKS_CLUSTER=jack-cluster
+export AWS_ACCOUNT_ID=216059448262
+
+# EFS文件系统的<file_system_id>
+file_system_id=fs-b7225f7a
+
+# busybox镜像地址
+busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/busybox:1.32
+
+# sonarqube镜像地址
+sonarqube_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sonarqube:8.5.1-community
+
+# curl镜像地址
+curl_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/curl:latest
+
+# sonarqube部署到的kubernetes namespace名称
+namespace=devops
+
+# sonarqube连接postgresql参数
+sonarqube_postgresql_db_host=sonarqube.cluster-cof70yepyr2j.ap-east-1.rds.amazonaws.com
+sonarqube_postgresql_db_database=sonar3
+sonarqube_postgresql_db_username=postgres
+sonarqube_postgresql_db_password=admin1234
+sonarqube_postgresql_db_port=5431
+
+# sonarqube的资源限制
+requests_cpu=500m
+requests_mem=1024Mi
+limits_cpu=4000m
+limits_mem=8096Mi
+
+# sonarqube的javaopts参数
+sonarqube_javaopts="-Xms128m -Xmx1024m "
