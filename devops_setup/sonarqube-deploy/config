@@ -12,6 +12,9 @@ file_system_id=fs-b7225f7a
 # busybox镜像地址
 busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/busybox:1.32
 
+# sonarqube admin密码
+sonarqube_admin_password=admin1234
+
 # sonarqube镜像地址
 sonarqube_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sonarqube:8.5.1-community
 

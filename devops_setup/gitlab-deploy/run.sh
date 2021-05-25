@@ -138,7 +138,7 @@ persistence.mountInfo[2].subPath=data \
 
 # 检查jenkins statefulset启动状态
 echo_green "step3. 检查gitlab状态"
-kubectl -n ${namespace} rollout status statefulset gitlab --timeout 5m
+kubectl -n ${namespace} rollout status statefulset gitlab --timeout 10m
 
 [ $? == 0 ] && { echo_green "gitlab部署成功"; } || { echo_red "gitlab部署失败"; }
 
