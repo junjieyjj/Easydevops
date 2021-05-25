@@ -99,6 +99,7 @@ helm upgrade sonarqube ./sonarqube \
 --set securityContext.fsGroup=0 \
 --set containerSecurityContext.runAsUser=0 \
 --set service.type=ClusterIP \
+--set deploymentStrategy.type=Recreate \
 --set persistence.enabled=true \
 --set persistence.existingClaim=sonarqube-pvc \
 --set postgresql.enabled=false  \

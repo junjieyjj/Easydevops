@@ -29,7 +29,7 @@ sonarqube_postgresql_db_password=admin1234
 sonarqube_postgresql_db_port=5431
 
 # sonarqube的资源限制
-requests_cpu=500m
+requests_cpu=501m
 requests_mem=1024Mi
 limits_cpu=4000m
 limits_mem=8096Mi
