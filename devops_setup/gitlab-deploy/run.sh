@@ -24,6 +24,8 @@ verify_config(){
     [ -z ${EKS_CLUSTER} ] && { echo_red "EKS_CLUSTER is Required, Please set it"; exit -1; }
     [ -z ${AWS_ACCOUNT_ID} ] && { echo_red "AWS_ACCOUNT_ID is Required, Please set it"; exit -1; }
     [ -z ${file_system_id} ] && { echo_red "file_system_id is Required, Please set it"; exit -1; }
+    [ -z ${gitlab_root_password} ] && { echo_red "gitlab_root_password is Required, Please set it"; exit -1; }
+    [ -z ${gitlab_external_url} ] && { echo_red "gitlab_external_url is Required, Please set it"; exit -1; }
     [ -z ${gitlab_image} ] && { echo_red "gitlab_image is Required, Please set it"; exit -1; }
     [ -z ${namespace} ] && { echo_red "namespace is Required, Please set it"; exit -1; }
     [ -z ${requests_cpu} ] && { echo_red "requests_cpu is Required, Please set it"; exit -1; }
@@ -53,7 +55,7 @@ create_gitlab_pv(){
       storage: 5Ti
     volumeMode: Filesystem
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     storageClassName: ""
     persistentVolumeReclaimPolicy: Retain
     csi:
@@ -71,7 +73,7 @@ create_gitlab_pvc(){
     namespace: ${namespace}
   spec:
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     storageClassName: ''
     resources:
       requests:
@@ -93,7 +95,8 @@ echo_green "step1. 创建gitlab-pv、gitlab-pvc"
 [ $(kubectl -n ${namespace} get pvc gitlab-pvc 2>/dev/null | wc -l ) == 0 ] && { echo "创建gitlab-pvc"; create_gitlab_pvc; } || { echo "命名空间${namespace} gitlab-pvc已存在，不需创建"; }
 
 # 渲染gitlab.yaml配置
-sed -e "s/GITLAB_POSTGRESQL_DB_DATABASE/${gitlab_postgresql_db_database}/" \
+sed -e "s/GITLAB_EXTERNAL_URL/${gitlab_external_url}/" \
+    -e "s/GITLAB_POSTGRESQL_DB_DATABASE/${gitlab_postgresql_db_database}/" \
     -e "s/GITLAB_POSTGRESQL_DB_USERNAME/${gitlab_postgresql_db_username}/" \
     -e "s/GITLAB_POSTGRESQL_DB_PASSWORD/${gitlab_postgresql_db_password}/" \
     -e "s/GITLAB_POSTGRESQL_DB_HOST/${gitlab_postgresql_db_host}/" \
