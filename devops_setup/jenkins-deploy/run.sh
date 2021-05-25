@@ -248,7 +248,7 @@ helm upgrade jenkins ./jenkins \
 
 # 检查jenkins statefulset启动状态
 echo_green "step4. 检查jenkins状态"
-kubectl -n ${namespace} rollout status statefulset jenkins --timeout 5m
+kubectl -n ${namespace} rollout status statefulset jenkins --timeout 10m
 
 [ $? == 0 ] && { echo_green "jenkins部署成功"; } || { echo_red "jenkins部署失败"; }
 

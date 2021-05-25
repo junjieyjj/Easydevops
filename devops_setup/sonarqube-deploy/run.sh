@@ -24,6 +24,7 @@ verify_config(){
     [ -z ${EKS_CLUSTER} ] && { echo_red "EKS_CLUSTER is Required, Please set it"; exit -1; }
     [ -z ${AWS_ACCOUNT_ID} ] && { echo_red "AWS_ACCOUNT_ID is Required, Please set it"; exit -1; }
     [ -z ${file_system_id} ] && { echo_red "file_system_id is Required, Please set it"; exit -1; }
+    [ -z ${sonarqube_admin_password} ] && { echo_red "sonarqube_admin_password is Required, Please set it"; exit -1; }
     [ -z ${busybox_image} ] && { echo_red "busybox_image is Required, Please set it"; exit -1; }
     [ -z ${sonarqube_image} ] && { echo_red "sonarqube_image is Required, Please set it"; exit -1; }
     [ -z ${namespace} ] && { echo_red "namespace is Required, Please set it"; exit -1; }
@@ -106,7 +107,7 @@ helm upgrade sonarqube ./sonarqube \
 --set postgresql.postgresqlUsername="${sonarqube_postgresql_db_username}" \
 --set postgresql.postgresqlPassword="${sonarqube_postgresql_db_password}" \
 --set jdbcUrlOverride="jdbc:postgresql://${sonarqube_postgresql_db_host}:${sonarqube_postgresql_db_port}/${sonarqube_postgresql_db_database}" \
---set account.adminPassword=admin \
+--set account.adminPassword=${sonarqube_admin_password} \
 --set account.currentAdminPassword=admin \
 --set curlContainerImage=${curl_image} \
 --set initContainers.image=${busybox_image} \
@@ -121,7 +122,7 @@ helm upgrade sonarqube ./sonarqube \
 
 # 检查jenkins statefulset启动状态
 echo_green "step4. 检查sonarqube状态"
-kubectl -n ${namespace} rollout status deployment sonarqube-sonarqube --timeout 5m
+kubectl -n ${namespace} rollout status deployment sonarqube-sonarqube --timeout 10m
 
 [ $? == 0 ] && { echo_green "sonarqube部署成功"; } || { echo_red "sonarqube部署失败"; }
 
