@@ -95,7 +95,7 @@ echo_green "step1. 创建gitlab-pv、gitlab-pvc"
 [ $(kubectl -n ${namespace} get pvc gitlab-pvc 2>/dev/null | wc -l ) == 0 ] && { echo "创建gitlab-pvc"; create_gitlab_pvc; } || { echo "命名空间${namespace} gitlab-pvc已存在，不需创建"; }
 
 # 渲染gitlab.yaml配置
-sed -e "s/GITLAB_EXTERNAL_URL/${gitlab_external_url}/" \
+sed -e "s|GITLAB_EXTERNAL_URL|${gitlab_external_url}|" \
     -e "s/GITLAB_POSTGRESQL_DB_DATABASE/${gitlab_postgresql_db_database}/" \
     -e "s/GITLAB_POSTGRESQL_DB_USERNAME/${gitlab_postgresql_db_username}/" \
     -e "s/GITLAB_POSTGRESQL_DB_PASSWORD/${gitlab_postgresql_db_password}/" \

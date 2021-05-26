@@ -1,4 +1,5 @@
 gitlabConfig:
+- external_url 'http://gitlab.demo.com'
 - gitlab_rails['db_adapter'] = "postgresql";
 - gitlab_rails['db_encoding'] = "unicode";
 - gitlab_rails['db_database'] = "gitlab";
