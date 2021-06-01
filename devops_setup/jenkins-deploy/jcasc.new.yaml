@@ -1,0 +1,306 @@
+credentials:
+  system:
+    domainCredentials:
+    - credentials:
+      - basicSSHUserPrivateKey:
+          description: "gitlab-ssh-key"
+          id: "gitlab-ssh-key"
+          privateKeySource:
+            directEntry:
+              privateKey: "{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}"
+          scope: GLOBAL
+          username: "service"
+      - usernamePassword:
+          description: "gitlab-http-user-password"
+          id: "gitlab-http-user-password"
+          password: "{AQAAABAAAAAQ7dtAebSSbzbJG/lvkdRz76kCkt9UDQgGmFBElr8nCcg=}"
+          scope: GLOBAL
+          username: "service"
+      - gitLabApiTokenImpl:
+          apiToken: "{AQAAABAAAAAg7/I6FHV84Jt9bPOJHjYnqOUwS9PuLMzwmh/nwdb7BuI1XYnXWeN7fMDq3xfJcVgR}"
+          description: "gitlab-api-token"
+          id: "gitlab-api-token"
+          scope: GLOBAL
+      - aws:
+          accessKey: "AKIATETRFRPDKSP5G7FT"
+          description: "aws-registry-secret"
+          id: "aws-registry-secret"
+          scope: GLOBAL
+          secretKey: "{AQAAABAAAAAw1HSB4+Sv67yEs6FJMHkF9lp57a4skE8Xa1CvFsGGTAAK1zAhiHbOajCZYBHqc575yWNSErH2T+Ms4ImnWLhN8Q==}"
+      - file:
+          description: "k8s-prod-config"
+          fileName: "k8s-prod-config.txt"
+          id: "k8s-prod-config"
+          scope: GLOBAL
+          secretBytes: "{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}"
+      - string:
+          description: "sonarqube-api-token"
+          id: "sonarqube-api-token"
+          scope: GLOBAL
+          secret: "{AQAAABAAAAAwgWZnsBDVI/JqizeWrJ1eQchpVxh60TTSGF73nwKla0l6GGwkm1MMaaJeXb2h+d9Ctfu4V4alp5JjJFQFBdyQEQ==}"
+      - file:
+          description: "k8s-test-config"
+          fileName: "k8s-test-config"
+          id: "k8s-test-config"
+          scope: GLOBAL
+          secretBytes: "{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}"
+      domain:
+        description: "devops credentials info"
+        name: "devops"
+jenkins:
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  clouds:
+  - kubernetes:
+      containerCap: 10
+      containerCapStr: "10"
+      jenkinsTunnel: "jenkins-agent.devops.svc.cluster.local:50000"
+      jenkinsUrl: "http://jenkins.devops.svc.cluster.local:8080"
+      name: "kubernetes"
+      namespace: "devops"
+      serverUrl: "https://kubernetes.default.svc.cluster.local:443"
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  disabledAdministrativeMonitors:
+  - "GitHubHookRegisterProblemMonitor"
+  globalNodeProperties:
+  - envVars:
+      env:
+      - key: "GITLAB_FQDN"
+        value: "gitlab.demo.com"
+      - key: "JACOCO_COVERAGE_NUM"
+        value: "0"
+  labelAtoms:
+  - name: "master"
+  markupFormatter: "plainText"
+  mode: NORMAL
+  myViewsTabBar: "standard"
+  numExecutors: 2
+  primaryView:
+    all:
+      name: "all"
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: false
+  scmCheckoutRetryCount: 0
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+  views:
+  - all:
+      name: "all"
+  - list:
+      columns:
+      - "status"
+      - "weather"
+      - "jobName"
+      - "lastSuccess"
+      - "lastFailure"
+      - "lastDuration"
+      - "buildButton"
+      jobNames:
+      - "seed_job"
+      name: "devops"
+  - list:
+      columns:
+      - "status"
+      - "weather"
+      - "jobName"
+      - "lastSuccess"
+      - "lastFailure"
+      - "lastDuration"
+      - "buildButton"
+      description: "poc项目的cicd流水线"
+      includeRegex: "^poc/.*/(ci|cd|config|secret)_.*"
+      name: "poc"
+      recurse: true
+  viewsTabBar: "standard"
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+  globalJobDslSecurityConfiguration:
+    useScriptSecurity: true
+  sSHD:
+    port: -1
+unclassified:
+  ansiColorBuildWrapper:
+    colorMaps:
+    - black: "#000000"
+      blackB: "#4C4C4C"
+      blue: "#1E90FF"
+      blueB: "#4682B4"
+      cyan: "#00CDCD"
+      cyanB: "#00FFFF"
+      green: "#00CD00"
+      greenB: "#00FF00"
+      magenta: "#CD00CD"
+      magentaB: "#FF00FF"
+      name: "xterm"
+      red: "#CD0000"
+      redB: "#FF0000"
+      white: "#E5E5E5"
+      whiteB: "#FFFFFF"
+      yellow: "#CDCD00"
+      yellowB: "#FFFF00"
+    - black: "#000000"
+      blackB: "#555555"
+      blue: "#0000AA"
+      blueB: "#5555FF"
+      cyan: "#00AAAA"
+      cyanB: "#55FFFF"
+      defaultBackground: 0
+      defaultForeground: 7
+      green: "#00AA00"
+      greenB: "#55FF55"
+      magenta: "#AA00AA"
+      magentaB: "#FF55FF"
+      name: "vga"
+      red: "#AA0000"
+      redB: "#FF5555"
+      white: "#AAAAAA"
+      whiteB: "#FFFFFF"
+      yellow: "#AA5500"
+      yellowB: "#FFFF55"
+    - black: "black"
+      blackB: "black"
+      blue: "blue"
+      blueB: "blue"
+      cyan: "cyan"
+      cyanB: "cyan"
+      green: "green"
+      greenB: "green"
+      magenta: "magenta"
+      magentaB: "magenta"
+      name: "css"
+      red: "red"
+      redB: "red"
+      white: "white"
+      whiteB: "white"
+      yellow: "yellow"
+      yellowB: "yellow"
+    - black: "#2E3436"
+      blackB: "#2E3436"
+      blue: "#3465A4"
+      blueB: "#3465A4"
+      cyan: "#06989A"
+      cyanB: "#06989A"
+      defaultBackground: 0
+      defaultForeground: 7
+      green: "#4E9A06"
+      greenB: "#4E9A06"
+      magenta: "#75507B"
+      magentaB: "#75507B"
+      name: "gnome-terminal"
+      red: "#CC0000"
+      redB: "#CC0000"
+      white: "#D3D7CF"
+      whiteB: "#D3D7CF"
+      yellow: "#C4A000"
+      yellowB: "#C4A000"
+  bitbucketEndpointConfiguration:
+    endpoints:
+    - bitbucketCloudEndpoint:
+        enableCache: false
+        manageHooks: false
+        repositoriesCacheDuration: 0
+        teamCacheDuration: 0
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
+  gitHubConfiguration:
+    apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    hookUrl: "http://jenkins.demo.com/github-webhook/"
+  gitLabConnectionConfig:
+    connections:
+    - apiTokenId: "gitlab-api-token"
+      clientBuilderId: "autodetect"
+      connectionTimeout: 10
+      ignoreCertificateErrors: false
+      name: "gitlab"
+      readTimeout: 10
+      url: "http://gitlab.demo.com"
+    useAuthenticatedEndpoint: true
+  gitLabServers:
+    servers:
+    - name: "gitlab"
+      secretToken: "{AQAAABAAAAAQQZeKG5nqd5UJxKsYYmQXULIBoh4IrgDtdApVygvQoTQ=}"
+      serverUrl: "http://gitlab.demo.com"
+  gitSCM:
+    addGitTagAction: false
+    allowSecondFetch: false
+    createAccountBasedOnEmail: false
+    disableGitToolChooser: false
+    hideCredentials: false
+    showEntireCommitSummaryInChanges: false
+    useExistingAccountWithSameEmail: false
+  globalLibraries:
+    libraries:
+    - name: "jenkins-shared-library"
+      retriever:
+        modernSCM:
+          scm:
+            git:
+              credentialsId: "gitlab-ssh-key"
+              id: "e1e4d731-75de-48d9-a36e-08f3076c65b1"
+              remote: "git@gitlab:devops/jenkins-shared-library.git"
+              traits:
+              - "gitBranchDiscovery"
+  junitTestResultStorage:
+    storage: "file"
+  location:
+    adminAddress: "address not configured yet <nobody@nowhere>"
+    url: "http://jenkins.demo.com/"
+  mailer:
+    charset: "UTF-8"
+    useSsl: false
+    useTls: false
+  pollSCM:
+    pollingThreadCount: 10
+  sonarGlobalConfiguration:
+    buildWrapperEnabled: false
+    installations:
+    - credentialsId: "sonarqube-api-token"
+      name: "sonarqube"
+      serverUrl: "http://sonarqube.demo.com"
+      triggers:
+        skipScmCause: false
+        skipUpstreamCause: false
+  timestamper:
+    allPipelines: false
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+  violationsToGitLabGlobalConfiguration:
+    apiTokenPrivate: false
+    authMethodHeader: false
+    ignoreCertificateErrors: false
+    minSeverity: INFO
+  whitelist:
+    enabled: false
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"
+  sonarRunnerInstallation:
+    installations:
+    - name: "SonarScanner4.6"
+      properties:
+      - installSource:
+          installers:
+          - sonarRunnerInstaller:
+              id: "4.6.2.2472"

@@ -1,0 +1,11 @@
+# 程序用户名
+service_user=service-test
+
+# 程序用户名密码
+service_password=admin1234
+
+# Gitlab域名
+gitlab_domain=http://34.80.173.131:8886
+
+# Gitlab root用户api token
+root_api_token=iWuiXQXMQd-jZdr1dVH3
