@@ -51,7 +51,7 @@ create_jenkins_pv(){
       storage: 5Ti
     volumeMode: Filesystem
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     storageClassName: ""
     persistentVolumeReclaimPolicy: Retain
     csi:
@@ -70,7 +70,7 @@ create_jenkins_pvc(){
     namespace: devops
   spec:
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     storageClassName: ""
     resources:
       requests:
