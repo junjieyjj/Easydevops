@@ -6,7 +6,7 @@ controller:
       command: 
         - "/bin/sh"
         - "-c"
-        - "[ -d /var/jenkins_home/jenkins-3.3.9-plugins.tar.gz ] && (echo Dir:/var/jenkins_home/plugins is existed) || (cd /var/jenkins_home/; curl -O https://jack-test-devops.s3.ap-east-1.amazonaws.com/jenkins-3.3.9-plugins.tar.gz; tar zxf jenkins-3.3.9-plugins.tar.gz)"
+        - "jenkins_plugins_url=JENKINS_PLUGINS_URL; plugins_tgz=$(echo $jenkins_plugins_url | awk -F'/' '{print $NF}') ;[ -f /var/jenkins_home/${plugins_tgz} ] && (echo Dir:/var/jenkins_home/plugins is existed) || (cd /var/jenkins_home/; curl -O ${jenkins_plugins_url}; tar zxf ${plugins_tgz})"
       resources:
         limits:
           cpu: "1"
