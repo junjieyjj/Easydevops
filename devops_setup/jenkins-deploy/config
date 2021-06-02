@@ -35,6 +35,7 @@ jenkins_javaopts="-Xms128m -Xmx1024m "
 
 # jcasc配置
 ## service程序账号信息
+## 注意：密码不能带有|字符
 gitlab_ssh_private_key='../tools/ssh-key/service'
 gitlab_http_password='IkwSNV$32%29sjw'
 gitlab_api_token='p33McqT6NZrVxzeEmeCy'
