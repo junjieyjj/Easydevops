@@ -79,7 +79,7 @@ create_jenkins_pvc(){
       matchLabels:
         pv: jenkins-pv
   ' | kubectl apply -f -
-  jenkins_pvc_status=$(kubectl -n ${namespace} get jenkins-pvc grep Bound | wc -l)
+  jenkins_pvc_status=$(kubectl -n ${namespace} get pvc jenkins-pvc | grep Bound | wc -l)
   [ ${jenkins_pvc_status} == 1 ] && echo "jenkins pv pvc创建成功" || { echo_red "jenkins pv pvc创建失败"; exit -1; }
 }
 
