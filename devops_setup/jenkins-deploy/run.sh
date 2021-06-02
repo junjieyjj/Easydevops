@@ -212,7 +212,8 @@ echo_green "step3. 创建jenkins-slave-pv、jenkins-slave-pvc、jenkins-slave-ro
 # 生成jcasc.yaml
 echo_green "step4. 创建jcasc.yaml配置文件"
 # render_jcasc_yaml()
-sed -e "s|GITLAB_HTTP_PASSWORD|${gitlab_http_password}|g" \
+sed -e "s|GITLAB_SSH_KEY_BASE64|${gitlab_ssh_key_base64}|g" \
+    -e "s|GITLAB_HTTP_PASSWORD|${gitlab_http_password}|g" \
     -e "s|GITLAB_API_TOKEN|${gitlab_api_token}|g" \
     -e "s|AWS_ACCESS_KEY|${aws_access_key}|g" \
     -e "s|AWS_SECRET_KEY|${aws_secret_key}|g" \
