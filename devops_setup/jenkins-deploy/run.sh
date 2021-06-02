@@ -211,7 +211,18 @@ echo_green "step3. 创建jenkins-slave-pv、jenkins-slave-pvc、jenkins-slave-ro
 
 # 生成jcasc.yaml
 echo_green "step4. 创建jcasc.yaml配置文件"
-render_jcasc_yaml()
+# render_jcasc_yaml()
+sed -e "s/GITLAB_HTTP_PASSWORD/${gitlab_http_password}/g" \
+    -e "s/GITLAB_API_TOKEN/${gitlab_api_token}/g" \
+    -e "s/AWS_ACCESS_KEY/${aws_access_key}/g" \
+    -e "s/AWS_SECRET_KEY/${aws_secret_key}/g" \
+    -e "s/SONARQUBE_API_TOKEN/${sonarqube_api_token}/g" \
+    -e "s/JENKINS_TUNNEL/${jenkins_tunnel}/g" \
+    -e "s|JENKINS_URL|${jenkins_url}|g" \
+    -e "s/GITLAB_FQDN_VAR/${gitlab_fqdn}/g" \
+    -e "s/JENKINS_FQDN_VAR/${jenkins_fqdn}/g" \
+    -e "s/SONARQUBE_FQDN_VAR/${sonarqube_fqdn}/g" jcasc.yaml.template
+    > jcasc.yaml
 
 # 使用helm搭建Jenkins
 echo_green "step5. helm部署Jenkins"
