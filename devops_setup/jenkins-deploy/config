@@ -50,3 +50,4 @@ sonarqube_fqdn='sonarqube.demo.com'
 ## kubernetes动态slave配置，需使用kubernetes集群内部service name
 jenkins_tunnel='jenkins-agent.devops.svc.cluster.local:50000'
 jenkins_url='http://jenkins.devops.svc.cluster.local:8080'
+jenkins_slave_namespace='jenkins-slave'
