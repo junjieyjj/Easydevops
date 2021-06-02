@@ -32,3 +32,21 @@ limits_mem=2048Mi
 
 # jenkins的javaopts参数
 jenkins_javaopts="-Xms128m -Xmx1024m "
+
+# jcasc配置
+## service程序账号信息
+gitlab_ssh_private_key='../tools/ssh-key/service'
+gitlab_http_password='IkwSNV$32%29sjw'
+gitlab_api_token='p33McqT6NZrVxzeEmeCy'
+aws_access_key='AKIATETRFRPDKSP5G7FT'
+aws_secret_key='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'
+sonarqube_api_token='dd782318e860ffb12ba591706e3c311f532cac54'
+
+# 域名配置
+gitlab_fqdn='gitlab.demo.com'
+jenkins_fqdn='jenkins.demo.com'
+sonarqube_fqdn='sonarqube.demo.com'
+
+## kubernetes动态slave配置，需使用kubernetes集群内部service name
+jenkins_tunnel='jenkins-agent.devops.svc.cluster.local:50000'
+jenkins_url='http://jenkins.devops.svc.cluster.local:8080'

@@ -174,6 +174,21 @@ create_jenkins_slave_rolebinding(){
   """ | kubectl create -f -
 }
 
+render_jcasc_yaml(){
+# 渲染jcasc.yaml配置
+  sed -e "s/GITLAB_HTTP_PASSWORD/${gitlab_http_password}/g" \
+      -e "s/GITLAB_API_TOKEN/${gitlab_api_token}/g" \
+      -e "s/AWS_ACCESS_KEY/${aws_access_key}/g" \
+      -e "s/AWS_SECRET_KEY/${aws_secret_key}/g" \
+      -e "s/SONARQUBE_API_TOKEN/${sonarqube_api_token}/g" \
+      -e "s/JENKINS_TUNNEL/${jenkins_tunnel}/g" \
+      -e "s|JENKINS_URL|${jenkins_url}|g" \
+      -e "s/GITLAB_FQDN_VAR/${gitlab_fqdn}/g" \
+      -e "s/JENKINS_FQDN_VAR/${jenkins_fqdn}/g" \
+      -e "s/SONARQUBE_FQDN_VAR/${sonarqube_fqdn}/g" jcasc.yaml.template
+      > jcasc.yaml
+}
+
 # 校验config配置
 verify_config
 
@@ -196,125 +211,7 @@ echo_green "step3. 创建jenkins-slave-pv、jenkins-slave-pvc、jenkins-slave-ro
 
 # 生成jcasc.yaml
 echo_green "step4. 创建jcasc.yaml配置文件"
-cat > jcasc.yaml << EOF
-controller:
-  customInitContainers: 
-    - name: custom-init
-      image: "${jenkins_image}"
-      imagePullPolicy: Always
-      command: 
-        - "/bin/sh"
-        - "-c"
-        - "[ -d /var/jenkins_home/jenkins-3.3.9-plugins.tar.gz ] && (echo Dir:/var/jenkins_home/plugins is existed) || (cd /var/jenkins_home/; curl -O ${jenkins_plugins_url}; tar zxf jenkins-3.3.9-plugins.tar.gz)"
-      resources:
-        limits:
-          cpu: "1"
-          memory: 2Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      volumeMounts:
-      - mountPath: /var/jenkins_home
-        name: jenkins-home
-  initScripts:
-    - |
-      def jcascFile = new File('/var/jenkins_home/casc_configs/jcasc.yaml')
-      jcascFile.delete()
-  JCasC:
-    defaultConfig: true
-    configScripts:
-      jcasc: |
-        jenkins:
-          systemMessage: Welcome to CI\CD server.
-          authorizationStrategy:
-            roleBased:
-              roles:
-                global:
-                  - name: "admin"
-                    description: "Jenkins administrators"
-                    permissions:
-                      - "Overall/Administer"
-                    assignments:
-                      - "admin"
-                  - name: "readonly"
-                    description: "Read-only users"
-                    permissions:
-                      - "Overall/Read"
-                      - "Job/Read"
-                    assignments:
-                      - "authenticated"
-                items:
-                  - name: "FolderA"
-                    description: "Jobs in Folder A, but not the folder itself"
-                    pattern: "A/.*"
-                    permissions:
-                      - "Job/Configure"
-                      - "Job/Build"
-                      - "Job/Delete"
-                    assignments:
-                      - "user1"
-                      - "user2"
-          securityRealm:
-            local:
-              allowsSignup: false
-              users:
-                - id: "admin"
-                  password: "admin"
-          globalNodeProperties:
-          - envVars:
-              env:
-              - key: GITLAB_URL
-                value: http://gitlab.demo.com
-              - key: SONARQUBE_URL
-                value: http://sonarqube.demo.com
-        unclassified:
-          location:
-            adminAddress: demo@example.com
-            url: https://jenkins.example.com
-          globalLibraries:
-            libraries:
-              - name: "shared-pipeline-library"
-                defaultVersion: master
-                retriever:
-                  modernSCM:
-                    scm:
-                      git:
-                        remote: "git@gitlab.demo.com:devops/shared-pipeline-library.git"
-                        credentialsId: gitlab-ssh-key
-          gitlabconnectionconfig:
-            connections:
-              - apiTokenId: gitlab-api-token
-                clientBuilderId: "autodetect"
-                connectionTimeout: 20
-                ignoreCertificateErrors: true
-                name: "gitlab"
-                readTimeout: 10
-                url: "http://gitlab.demo.com"
-          ansiColorBuildWrapper:
-            globalColorMapName: xterm
-        credentials:
-          system:
-            domainCredentials:
-              - domain:
-                  name: "devops"
-                  description: "store devops secrets"
-                credentials:
-                  - basicSSHUserPrivateKey:
-                      scope: GLOBAL
-                      id: gitlab-ssh-key
-                      username: demo
-                      passphrase: ''
-                      description: "gitlab-ssh-key"
-                      privateKeySource:
-                        directEntry:
-                          privateKey: "SSH_PRIVATE_KEY"
-                  - gitLabApiTokenImpl:
-                      scope: SYSTEM
-                      id: gitlab-api-token
-                      apiToken: "BIND_TOKEN"
-                      description: "gitlab-api-token"
-EOF
-
+render_jcasc_yaml()
 
 # 使用helm搭建Jenkins
 echo_green "step5. helm部署Jenkins"
