@@ -72,7 +72,7 @@ create_devops_dir(){
     - name: app
       image: ${busybox_image}
       command: ['/bin/sh']
-      args: ['-c', 'mkdir -p /data/jenkins /data/gitlab /data/sonarqube; sleep 1000000000']
+      args: ['-c', 'mkdir -p /data/jenkins /data/jenkins-slave /data/gitlab /data/sonarqube; sleep 1000000000']
       volumeMounts:
       - name: persistent-storage
         mountPath: /data

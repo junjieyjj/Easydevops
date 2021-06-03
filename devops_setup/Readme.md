@@ -102,10 +102,10 @@ curl --location --request POST 'http://127.0.0.1:80/api/v4/groups/' \
 --header 'Content-Type: application/json' \
 --data-raw '{"path": "poc","name": "poc"}'
 
-记录执行结果{"id":169,...}
+记录执行结果{"id":3,...}
 
 # 创建poc project
-curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=spring-boot-demo&namespace_id=169' \
+curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=spring-boot-demo&namespace_id=3' \
 --header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
 
 # 创建devops group
@@ -114,29 +114,34 @@ curl --location --request POST 'http://127.0.0.1:80/api/v4/groups/' \
 --header 'Content-Type: application/json' \
 --data-raw '{"path": "devops","name": "devops"}'
 
-记录执行结果{"id":170,...}
+记录执行结果{"id":4,...}
 
 # 创建jenkins-shared-library和cicd project
-curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=jenkins-shared-library&namespace_id=170' \
+curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=jenkins-shared-library&namespace_id=4' \
 --header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
 
-curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=cicd&namespace_id=170' \
+curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=cicd&namespace_id=4' \
 --header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
+
+执行上面命令后退出终端<ctrl> + d
 ```
 
 - **登录service账号，上传ssh公钥**
 ```
-公钥路径：tools/ssh-key/service.pub
+# 设置gitlab端口转发到本地
+kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8886:80 >/dev/null 2>&1 &
+
+公钥路径：../tools/ssh-key/service.pub
 ```
 
 - **上传jenkins-shared-library、poc、cicd代码**
 ```
-# 设置gitlab端口转发到本地
-kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8886:80 >/dev/null 2>&1 &
+# 使用上面创建的service用户上传代码
+service / IkwSNV$32%29sjw
 
 git clone http://127.0.0.1:8886/devops/jenkins-shared-library.git
 cd jenkins-shared-library
-cp -afr code/jenkins-shared-library/* .
+cp -afr ../code/jenkins-shared-library/* .
 git add .
 git commit -m "init jenkins-shared-library"
 git push -u origin master
@@ -144,7 +149,7 @@ git push -u origin master
 cd ..
 git clone http://127.0.0.1:8886/devops/cicd.git
 cd cicd
-cp -afr code/cicd/* .
+cp -afr ../code/cicd/* .
 git add .
 git commit -m "init cicd"
 git push -u origin master
@@ -152,7 +157,7 @@ git push -u origin master
 cd ..
 git clone http://127.0.0.1:8886/poc/spring-boot-demo.git
 cd spring-boot-demo
-cp -afr code/spring-boot-demo/* .
+cp -afr ../code/spring-boot-demo/* .
 git add .
 git commit -m "init spring-boot-demo"
 git push -u origin master
@@ -176,7 +181,7 @@ PS：状态为1/1 Running为成功，如：
 sonarqube-sonarqube-7b65b8bc75-h2vck   1/1     Running   0          146m
 ```
 
-- **进入sonarqube容器创建service账号、api token**
+- **创建sonarqube service账号、api token**
 ```bash
 # 设置sonarqube端口转发到本地
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/sonarqube-sonarqube 8885:9000 >/dev/null 2>&1 &
@@ -196,6 +201,7 @@ curl -u admin:${sonarqube_admin_password} -X POST -d "name=jenkins&url=http://je
 netstat -tnlup | grep 8885 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 ```
 
+00cfa942f69df2b458c9bee62b8cefb4b4c62c36
 
 
 

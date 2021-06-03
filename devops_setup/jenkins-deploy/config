@@ -42,7 +42,7 @@ gitlab_http_password='IkwSNV$32%29sjw'
 # service用户的api token
 gitlab_api_token='p33McqT6NZrVxzeEmeCy'
 # service用户的api token
-sonarqube_api_token='dd782318e860ffb12ba591706e3c311f532cac54'
+sonarqube_api_token='00cfa942f69df2b458c9bee62b8cefb4b4c62c36'
 
 # 域名配置
 gitlab_fqdn='gitlab.demo.com'
