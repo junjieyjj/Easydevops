@@ -223,6 +223,7 @@ sed -e "s|GITLAB_SSH_KEY_BASE64|${gitlab_ssh_key_base64}|g" \
     -e "s|GITLAB_FQDN_VAR|${gitlab_fqdn}|g" \
     -e "s|JENKINS_FQDN_VAR|${jenkins_fqdn}|g" \
     -e "s|JENKINS_PLUGINS_URL|${jenkins_plugins_url}|g" \
+    -e "s|K8S_TEST_CONFIG|${k8s_default_config_base64}|g" \
     -e "s|SONARQUBE_FQDN_VAR|${sonarqube_fqdn}|g" jcasc.yaml.template \
     > jcasc.yaml
 

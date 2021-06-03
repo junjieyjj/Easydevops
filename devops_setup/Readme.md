@@ -197,12 +197,7 @@ curl -X POST -u admin:${sonarqube_admin_password} -d "login=service&name=sonarqu
 # 创建sonarqube回调jenkins webhook
 curl -u admin:${sonarqube_admin_password} -X POST -d "name=jenkins&url=http://jenkins.demo.com/sonarqube-webhook/" "http://127.0.0.1:8885/api/webhooks/create"
 
-# 停止sonarqube端口转发
-netstat -tnlup | grep 8885 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 ```
-
-00cfa942f69df2b458c9bee62b8cefb4b4c62c36
-
 
 
 5. 上传jenkins插件到s3
@@ -221,9 +216,23 @@ aws s3api put-object --bucket jack-test-devops --key jenkins-3.3.9-plugins.tar.g
 配置jenkins-deploy/config参数
 
 执行命令：sh ./run.sh
+
+# 设置jenkins端口转发到本地
+source ./config
+kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/jenkins 8888:8080 >/dev/null 2>&1 &
 ```
 
+8. 创建dsl job、poc job测试
+```
 
+```
+
+9. 测试完成后，停止端口转发
+```
+netstat -tnlup | grep 8885 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
+netstat -tnlup | grep 8886 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
+netstat -tnlup | grep 8888 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
+```
 
 # 问题
 ## Jenkins
