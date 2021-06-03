@@ -24,6 +24,8 @@ controller:
   containerEnv:
     - name: GITLAB_SSH_KEY
       value: GITLAB_SSH_KEY_BASE64
+    - name: K8S_TEST_CONFIG
+      value: K8S_DEFAULT_CONFIG_BASE64
   JCasC:
     defaultConfig: true
     configScripts:
