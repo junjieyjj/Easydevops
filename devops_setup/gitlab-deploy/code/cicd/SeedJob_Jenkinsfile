@@ -1,0 +1,7 @@
+#!groovy
+@Library('jenkins-shared-library@master') _
+
+SeedJob_Pipeline {
+    // 分支列表
+    CI_BRANCH_LIST = ['dev', 'master', 'bugfix']
+}

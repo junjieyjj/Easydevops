@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+#  用于支持istio
+#  name: {{ .Values.appname }}-{{ .Values.version }}
+  name: {{ .Values.appname }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appname }}
+    project: {{ .Values.project }}
+    version: {{ .Values.version | quote }}
+    build_tag: {{ .Values.build_tag }}
+    gitcommit: {{ .Values.gitcommit }}
+spec:
+  revisionHistoryLimit: 5
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appname }}
+  #minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appname }}
+        version: {{ .Values.version | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.appname }}
+        image: {{ .Values.image.repository }}/{{ .Values.project }}/{{ .Values.appname }}:{{ .Values.build_tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- if .Values.ports }}
+        # 端口列表
+        ports:
+        {{- end }}
+      {{- $serviceType := .Values.service.type -}}
+      {{- range .Values.ports }}
+      {{- with . }}
+        - name: {{ .name }}
+          protocol: {{ .protocol }}
+          containerPort: {{ .targetPort }}
+      {{- end }}
+      {{- end }}
+
+        {{- if .Values.resources }}
+        # 资源限制
+        resources:
+        {{- if .Values.resources.requests }}
+          requests:
+          {{- range $key, $val := .Values.resources.requests }}
+            {{ $key }}: {{ $val | quote }}
+          {{- end}}
+        {{- end -}}
+        {{- if .Values.resources.limits }}
+          limits:
+          {{- range $key, $val := .Values.resources.limits }}
+            {{ $key }}: {{ $val | quote }}
+          {{- end}}
+        {{- end }}
+        {{- end }}
+
+        # 探针
+        {{- with .Values.livenessProbe }}
+          {{- "livenessProbe:" | nindent 8 }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- with .Values.readinessProbe }}
+        {{- "readinessProbe:" | nindent 8 }}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+
+        # 环境变量：获取Pod变量
+        env:
+          {{- with .Values.envs }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+          - name: MY_CONTAINER_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+
+        {{- if eq .Values.configMap_env "true" }}
+        # 应用环境变量
+        envFrom:
+        - configMapRef:
+            name: {{ .Values.appname }}-env
+        {{- end }}
+
+        {{- if or (.Values.volumeMounts_global) (eq .Values.configMap_conf "true") }}
+        # 卷挂载
+        volumeMounts:
+        {{- end }}
+      {{- range .Values.volumeMounts_global }}
+      {{- with . }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+      {{- end }}
+      
+      {{- end }}
+      {{- range .Values.volumeMounts }}
+      {{- with . }}
+        - name: {{ .name }}
+          mountPath: {{ .mountPath }}
+      {{- end }}
+      {{- end }}
+
+        {{- if eq .Values.configMap_conf "true" }}
+        # 挂载configMap_conf配置卷到目录
+        - name: configs
+          mountPath: /configs/
+        {{- end }}
+
+      {{- if or (.Values.volumeMounts_global) (eq .Values.configMap_conf "true") }}
+      # 定义卷资源
+      volumes:
+      {{- end }}
+    {{- range .Values.volumeMounts_global }}
+    {{- with . }}
+      - name: {{ .name }}
+        emptyDir: {{ .emptyDir }}
+    {{- end }}
+    {{- end }}
+    
+    {{- range .Values.volumeMounts }}
+    {{- with . }}
+      - name: {{ .name }}
+        emptyDir: {{ .emptyDir }}
+    {{- end }}
+    {{- end }}
+
+      {{- if eq .Values.configMap_conf "true" }}
+      # 定义configMap-conf为卷
+      - name: configs
+        configMap:
+          name: {{ .Values.appname }}-conf
+      {{- end }}
+
+
+      {{- with .Values.nodeSelector }}
+      # 节点选择
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end -}}

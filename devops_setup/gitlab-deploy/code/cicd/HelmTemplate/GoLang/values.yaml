@@ -1,0 +1,11 @@
+replicaCount: 1
+
+image:
+  repository: null
+  pullPolicy: Always
+  # pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+
+nodeSelector: {}
