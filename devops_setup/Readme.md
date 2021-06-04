@@ -1,16 +1,106 @@
+# 准备工作
+
+## 1、准备一台Centos7 EC2
+
+必须可以与devops k8s集群通信
+
+
+
+## 2、安装aws cli
+
+```bash
+cd tools
+unzip awscliv2.zip
+cd aws
+./install
+
+aws --version
+输出以下信息说明安装成功：
+aws-cli/2.2.5 Python/3.8.8 Linux/3.10.0-1160.15.2.el7.x86_64 exe/x86_64.centos.7 prompt/off
+```
+
+
+
+## 3、安装helm3
+
+```bash
+cd tools
+tar zxf helm-v3.5.4-linux-amd64.tar.gz
+mv linux-amd64/helm /usr/local/bin
+chmod +x /usr/local/bin/helm
+
+helm version
+输出以下信息说明安装成功：
+version.BuildInfo{Version:"v3.5.4", GitCommit:"1b5edb69df3d3a08df77c9902dc17af864ff05d1", GitTreeState:"clean", GoVersion:"go1.15.11"}
+```
+
+
+
+## 4、安装kubectl
+
+```bash
+# 安装Kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# kubectl自动补全
+yum -y install bash-completion
+echo 'source <(kubectl completion bash)' >>~/.bashrc
+重新登录会话
+```
+
+
+
+## 5、镜像准备
+
+需用户自行把组件镜像推送到k8s可访问私有仓库，如集群可访问公网，也可直接使用官方公仓镜像
+
+| 镜像名称   | 官方公仓镜像              |
+| ---------- | ------------------------- |
+| 初始化容器 | curl:latest               |
+| 初始化容器 | busybox:1.32              |
+| Gitlab     | gitlab-ce:12.10.14-ce.0   |
+| Sonarqube  | sonarqube:8.5.1-community |
+| Jenkins    | jenkins:2.277.3-lts       |
+|            |                           |
+
+
+
+## 6、中间件准备
+
+| 类型       | 版本  | 用途                                               |
+| ---------- | ----- | -------------------------------------------------- |
+| PostgreSql | 11.9  | Gitlab数据库                                       |
+| Redis      | 6.0.5 | Gitlab缓存数据库，只能是主从版本，不能使用集群版本 |
+| PostgreSql | 11.7  | Sonarqube数据库                                    |
+| S3         | AWS   | 保存初始化的Jenkins插件                            |
+
+
+
 # 执行步骤
 
-1. 使用脚本部署gitlab
+## 1、使用脚本创建efs持久化目录
+
+```bash
+配置infra/config参数
+
+执行命令：sh ./run.sh
+```
+
+
+
+## 2、使用脚本部署gitlab
 ```bash
 配置gitlab-deploy/config参数
 
 执行命令：sh ./run.sh
 ```
 
-2. gitlab部署成功后，进行初始化（创建service账号、token、上传ssh公钥、创建group、project）
+
+
+## 3、gitlab部署成功后，进行初始化（创建service账号、token、上传ssh公钥、创建group、project）
 
 - **检验gitlab是否部署成功**
-```
+```bash
 cd gitlab-deploy
 source config
 kubectl -n ${namespace} get pod gitlab-0
@@ -26,6 +116,7 @@ kubectl -n ${namespace} exec -it gitlab-0 bash
 # 创建service账号和api token
 gitlab-rails console
 
+# 进入console后执行以下命令
 service_user = User.create(:name => "service", :username => "service", :email => "service@nomail.com", :password => "IkwSNV$32%29sjw", :password_confirmation => "IkwSNV$32%29sjw", :admin => true)
 
 service_user.confirmed_at = Time.zone.now
@@ -47,7 +138,7 @@ curl --location --request POST 'http://127.0.0.1:80/api/v4/groups/' \
 
 记录执行结果{"id":3,...}
 
-# 创建poc project
+# 创建poc project，替换id值为上面结果的id值
 curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=spring-boot-demo&namespace_id=3' \
 --header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
 
@@ -59,7 +150,7 @@ curl --location --request POST 'http://127.0.0.1:80/api/v4/groups/' \
 
 记录执行结果{"id":4,...}
 
-# 创建jenkins-shared-library和cicd project
+# 创建jenkins-shared-library和cicd project，替换id值为上面结果的id值
 curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=jenkins-shared-library&namespace_id=4' \
 --header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
 
@@ -106,14 +197,19 @@ git commit -m "init spring-boot-demo"
 git push -u origin master
 ```
 
-3. 使用脚本部署sonarqube
+
+
+## 4、使用脚本部署sonarqube
+
 ```bash
 配置sonarqube-deploy/config参数
 
 执行命令：sh ./run.sh
 ```
 
-4. sonarqube初始化（创建service账号，token、回调jenkins webhook）
+
+
+## 5、sonarqube初始化（创建service账号，token、回调jenkins webhook）
 
 - **检验sonarqube是否部署成功**
 ```
@@ -135,15 +231,17 @@ curl -X POST -u admin:${sonarqube_admin_password} -d "login=service&name=service
 # 创建service用户api token
 curl -X POST -u admin:${sonarqube_admin_password} -d "login=service&name=sonarqube-api-token" "http://127.0.0.1:8885/api/user_tokens/generate"
 
-记录执行结果{..,"token":"8705144caa226e70cf385abd09bd4a082c2687e9",..}
+记录执行结果{..,"token":"a41193c8db28b1fcb184ac5de8a5f7dab7563f7c",..}
 
-# 创建sonarqube回调jenkins webhook
+# 创建sonarqube回调jenkins webhook，jenkins.demo.com需改为jenkins的fqdn
 curl -u admin:${sonarqube_admin_password} -X POST -d "name=jenkins&url=http://jenkins.demo.com/sonarqube-webhook/" "http://127.0.0.1:8885/api/webhooks/create"
 
 ```
 
 
-5. 上传jenkins插件到s3
+
+## 6、上传jenkins插件到s3
+
 ```bash
 命令：
 aws s3api put-object --bucket <bucket-name> --key jenkins-3.3.9-plugins.tar.gz --body jenkins-3.3.9-plugins.tar.gz
@@ -152,9 +250,14 @@ aws s3api put-object --bucket <bucket-name> --key jenkins-3.3.9-plugins.tar.gz -
 aws s3api put-object --bucket jack-test-devops --key jenkins-3.3.9-plugins.tar.gz --body jenkins-3.3.9-plugins.tar.gz
 ```
 
-6. 赋予jenkins-plugins.tgz插件的s3的下载权限
 
-7. 使用脚本部署jenkins
+
+## 7、赋予jenkins-plugins.tgz插件的s3的下载权限
+
+
+
+## 8、使用脚本部署jenkins
+
 ```bash
 配置jenkins-deploy/config参数
 
@@ -165,21 +268,45 @@ source ./config
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/jenkins 8888:8080 >/dev/null 2>&1 &
 ```
 
-8. 创建dsl job、poc job测试
+
+
+## 9、创建dsl job、poc job测试
+
 ```bash
 # 创建seed-job
-New Item -> 
+New Item -> 流水线
+name: seed-job
+Pipeline -> Pipeline script from SCM -> Git 
+Repository URL：git@gitlab.demo.com:devops/cicd.git
+Credentials：service(gitlab-ssh-key)
+Script Path：SeedJob_Jenkinsfile
+
+执行seed-job，通过dsl生成cicd
+
 ```
 
-9. 测试完成后，停止端口转发
+
+
+## 10、测试完成后，停止端口转发
+
 ```
 netstat -tnlup | grep 8885 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 netstat -tnlup | grep 8886 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 netstat -tnlup | grep 8888 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 ```
 
-# 程序账号
+
+
+## 11、配置组件域名，供外部访问
+
+> 参考nlb/README.md
+
+
+
+# 账号信息
+
 ## Gitlab
+```bash
 用户名 / 密码
 service / IkwSNV$32%29sjw
 
@@ -187,6 +314,7 @@ service / IkwSNV$32%29sjw
 service / p33McqT6NZrVxzeEmeCy
 
 ssh key
+
 service.pub
 -----------------
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMFez1WfsLWYyFoW6cIe/ODn8oblloLwXjwaAvAsQ5exKD5Rat+Wo4njjWMHO48rNnMJcnpu2Au/Nd2kMFkbB2hJ/frlIAHbJuYsOCyKydKwJzSmtr8AHVAnr+TIvgpn+MCtOAXII0MssRY25UILwB5YvG+iJvYTkZACp51rRhsF3qAJAxPBFoNxUh8+HPhyXdWHFyN/ElmBQNH3V7V7FUc/FaiiRd8/ozh7YsoBjtC9/Rt9ahBBd7wtrzOQujpijA3BlJFoGs1R1ramLlyLT5NLz0yN1p6+4i3CCMUHs9oYvOYa6iXhbUF3KIY/YnejLgH3hDiyg0TvVJ0Hb5gqcx service
@@ -220,25 +348,25 @@ RAY7dEhZAoGAI3Zxe0QXs2fShm+KevFQ86oAKUMRvrga4DUdp20Yazs+IRye7GnF
 b+hlphmIXJuFXnNyjhvht0ucBZh/lOFPjdjNji69zvjGF8e9VxaHFqKcBEp6Q7J/
 1Yq/aZz/eZ1X2Q5A+fkBkhskIRpstroPwZljtqV0rDlc02MDYipJQ7E=
 -----END RSA PRIVATE KEY-----
+```
+
+
 
 ## Sonarqube
+```bash
 用户名 / 密码
 service / IkwSNV$32%29sjw
 
 用户名 / api token
 service / dd782318e860ffb12ba591706e3c311f532cac54
+```
+
+
 
 ## Jenkins
+```bash
 service / IkwSNV$32%29sjw
-
-## EKS
-kubeconfig配置文件
+```
 
 
-# 问题
-## Jenkins
-1. token以明文方式存在配置文件中
 
-2. shell无法通过环境变量渲染GITLAB_SSH_PRIVATE_KEY，明文写死在jcasc.yaml.template
-
-3. 
