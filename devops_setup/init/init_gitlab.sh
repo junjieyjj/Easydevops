@@ -1,8 +1,9 @@
 #!/usr/bin/bash
 SCRIPT_BASEDIR=$(dirname "$0")
-PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
 cd ${SCRIPT_BASEDIR}
+CURRENT_PATH="$PWD"
+PROJECT_BASEDIR=$(dirname "${CURRENT_PATH}")
 
 # 加载配置文件
 source ${SCRIPT_BASEDIR}/config
