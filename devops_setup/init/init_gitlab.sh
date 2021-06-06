@@ -2,7 +2,7 @@
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
-CURRENT_PATH="$PWD"
+SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${CURRENT_PATH}")
 
 # 加载配置文件
