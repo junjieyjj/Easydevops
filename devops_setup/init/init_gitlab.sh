@@ -1,5 +1,11 @@
+#!/usr/bin/bash
+SCRIPT_BASEDIR=$(dirname "$0")
+PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
+
+cd ${SCRIPT_BASEDIR}
+
 # 加载配置文件
-source ./config
+source ${SCRIPT_BASEDIR}/config
 
 echo "step1. Setup gitlab 80/22 port forward to 0.0.0.0 8886/8887"
 # 配置gitlab端口转发
@@ -47,8 +53,8 @@ curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&
 
 echo "step4. Add service user ssh public key"
 # 上传ssh key到service用户
-cp ../tools/ssh-key/service.pub ~/.ssh/
-cp ../tools/ssh-key/service ~/.ssh/
+cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service.pub ~/.ssh/
+cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service ~/.ssh/
 
 service_user_id=$(curl -s --location --request GET "http://127.0.0.1:8886/api/v4/users?username=service" \
 --header "Authorization: Bearer ${gitlab_api_token}" | jq '.[].id')
@@ -66,27 +72,30 @@ UserKnownHostsFile /dev/null ' \
 
 git clone ssh://git@127.0.0.1:8887/devops/jenkins-shared-library.git 
 cd jenkins-shared-library
-cp -afr ../code/jenkins-shared-library/* .
+cp -afr ${PROJECT_BASEDIR}/code/jenkins-shared-library/* .
 git add .
 git commit -m "init jenkins-shared-library"
 git push -u origin master
 
-cd ..
+cd ${SCRIPT_BASEDIR}
 git clone ssh://git@127.0.0.1:8887/devops/cicd.git 
 cd cicd
-cp -afr ../code/cicd/* .
+cp -afr ${PROJECT_BASEDIR}/code/cicd/* .
 git add .
 git commit -m "init cicd"
 git push -u origin master
 
-cd ..
+cd ${SCRIPT_BASEDIR}
 git clone ssh://git@127.0.0.1:8887/poc/spring-boot-demo.git
 cd spring-boot-demo
-cp -afr ../code/spring-boot-demo/* .
+cp -afr ${PROJECT_BASEDIR}/code/spring-boot-demo/* .
 git add .
 git commit -m "init spring-boot-demo"
 git push -u origin master
 
-echo "step6. Close port forward"
+echo "step6. Close port forward and remove local init project"
 netstat -tnlup | grep 8886 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 netstat -tnlup | grep 8887 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
+
+cd ${SCRIPT_BASEDIR}
+rm -fr jenkins-shared-library cicd spring-boot-demo
