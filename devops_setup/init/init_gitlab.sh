@@ -73,7 +73,7 @@ UserKnownHostsFile /dev/null ' \
 
 git clone ssh://git@127.0.0.1:8887/devops/jenkins-shared-library.git 
 cd jenkins-shared-library
-cp -afr ${SCRIPT_BASEDIR}/code/jenkins-shared-library/* .
+cp -afr ../code/jenkins-shared-library/* .
 git add .
 git commit -m "init jenkins-shared-library"
 git push -u origin master
@@ -81,7 +81,7 @@ git push -u origin master
 cd ${SCRIPT_BASEDIR}
 git clone ssh://git@127.0.0.1:8887/devops/cicd.git 
 cd cicd
-cp -afr ${PROJECT_BASEDIR}/code/cicd/* .
+cp -afr ../code/cicd/* .
 git add .
 git commit -m "init cicd"
 git push -u origin master
@@ -89,7 +89,7 @@ git push -u origin master
 cd ${SCRIPT_BASEDIR}
 git clone ssh://git@127.0.0.1:8887/poc/spring-boot-demo.git
 cd spring-boot-demo
-cp -afr ${SCRIPT_BASEDIR}/code/spring-boot-demo/* .
+cp -afr ../code/spring-boot-demo/* .
 git add .
 git commit -m "init spring-boot-demo"
 git push -u origin master
@@ -97,6 +97,8 @@ git push -u origin master
 echo "step6. Close port forward and remove local init project"
 cd ${SCRIPT_BASEDIR}
 rm -fr jenkins-shared-library cicd spring-boot-demo
+rm -fr cicd
+rm -fr spring-boot-demo
 
 netstat -tnlup | grep 8886 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 netstat -tnlup | grep 8887 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
