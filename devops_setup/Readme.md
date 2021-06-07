@@ -10,6 +10,7 @@
 
 ```bash
 cd tools
+yum install -y unzip
 unzip awscliv2.zip
 cd aws
 ./install
@@ -41,6 +42,8 @@ version.BuildInfo{Version:"v3.5.4", GitCommit:"1b5edb69df3d3a08df77c9902dc17af86
 ```bash
 # 安装Kubectl
 curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+mv kubectl /usr/local/bin/
 
 # kubectl自动补全
 yum -y install bash-completion
@@ -50,7 +53,15 @@ echo 'source <(kubectl completion bash)' >>~/.bashrc
 
 
 
-## 5、镜像准备
+## 5、安装git
+
+```
+yum install -y git
+```
+
+
+
+## 6、镜像准备
 
 需用户自行把组件镜像推送到k8s可访问私有仓库，如集群可访问公网，也可直接使用官方公仓镜像
 
@@ -65,7 +76,7 @@ echo 'source <(kubectl completion bash)' >>~/.bashrc
 
 
 
-## 6、中间件准备
+## 7、中间件准备
 
 | 类型       | 版本  | 用途                                               |
 | ---------- | ----- | -------------------------------------------------- |
@@ -73,6 +84,18 @@ echo 'source <(kubectl completion bash)' >>~/.bashrc
 | Redis      | 6.0.5 | Gitlab缓存数据库，只能是主从版本，不能使用集群版本 |
 | PostgreSql | 11.7  | Sonarqube数据库                                    |
 | S3         | AWS   | 保存初始化的Jenkins插件                            |
+
+
+
+## 8、上传jenkins插件到s3，、赋予jenkins-plugins.tgz插件的s3的下载权限
+
+```bash
+命令：
+aws s3api put-object --bucket <bucket-name> --key jenkins-3.3.9-plugins.tar.gz --body jenkins-3.3.9-plugins.tar.gz
+
+示例：
+aws s3api put-object --bucket jack-test-devops --key jenkins-3.3.9-plugins.tar.gz --body jenkins-3.3.9-plugins.tar.gz
+```
 
 
 
@@ -97,104 +120,12 @@ echo 'source <(kubectl completion bash)' >>~/.bashrc
 
 
 
-## 3、gitlab部署成功后，进行初始化（创建service账号、token、上传ssh公钥、创建group、project）
+## 3、使用脚本初始化gitlab
 
-- **检验gitlab是否部署成功**
 ```bash
-cd gitlab-deploy
-source config
-kubectl -n ${namespace} get pod gitlab-0
-PS：状态为1/1 Running为成功，如：
-gitlab-0                               1/1     Running   0          11m
+配置init/config参数
 
-```
-
-- **进入gitlab容器创建service账号、api token、group和project**
-```bash
-kubectl -n ${namespace} exec -it gitlab-0 bash
-
-# 创建service账号和api token
-gitlab-rails console
-
-# 进入console后执行以下命令
-service_user = User.create(:name => "service", :username => "service", :email => "service@nomail.com", :password => "IkwSNV$32%29sjw", :password_confirmation => "IkwSNV$32%29sjw", :admin => true)
-
-service_user.confirmed_at = Time.zone.now
-
-service_token = service_user.personal_access_tokens.create(scopes: [:api, :read_user, :read_api, :read_repository, :write_repository, :sudo], name: 'gitlab-api-token')
-
-service_token.set_token('p33McqT6NZrVxzeEmeCy')
-
-service_token.save!
-service_user.save!
-
-执行上面命令后退出终端<ctrl> + d
-
-# 创建poc group
-curl --location --request POST 'http://127.0.0.1:80/api/v4/groups/' \
---header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy' \
---header 'Content-Type: application/json' \
---data-raw '{"path": "poc","name": "poc"}'
-
-记录执行结果{"id":3,...}
-
-# 创建poc project，替换id值为上面结果的id值
-curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=spring-boot-demo&namespace_id=3' \
---header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
-
-# 创建devops group
-curl --location --request POST 'http://127.0.0.1:80/api/v4/groups/' \
---header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy' \
---header 'Content-Type: application/json' \
---data-raw '{"path": "devops","name": "devops"}'
-
-记录执行结果{"id":4,...}
-
-# 创建jenkins-shared-library和cicd project，替换id值为上面结果的id值
-curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=jenkins-shared-library&namespace_id=4' \
---header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
-
-curl --location --request POST 'http://127.0.0.1:80/api/v4/projects?name=cicd&namespace_id=4' \
---header 'Authorization: Bearer p33McqT6NZrVxzeEmeCy'
-
-执行上面命令后退出终端<ctrl> + d
-```
-
-- **登录service账号，上传ssh公钥**
-```
-# 设置gitlab端口转发到本地
-kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8886:80 >/dev/null 2>&1 &
-
-公钥路径：../tools/ssh-key/service.pub
-```
-
-- **上传jenkins-shared-library、poc、cicd代码**
-```
-# 使用上面创建的service用户上传代码
-service / IkwSNV$32%29sjw
-
-git clone http://127.0.0.1:8886/devops/jenkins-shared-library.git
-cd jenkins-shared-library
-cp -afr ../code/jenkins-shared-library/* .
-git add .
-git commit -m "init jenkins-shared-library"
-git push -u origin master
-
-cd ..
-git clone http://127.0.0.1:8886/devops/cicd.git
-cd cicd
-cp -afr ../code/cicd/* .
-git add .
-git commit -m "init cicd"
-git push -u origin master
-
-cd ..
-git clone http://127.0.0.1:8886/poc/spring-boot-demo.git
-cd spring-boot-demo
-cp -afr ../code/spring-boot-demo/* .
-git add .
-git commit -m "init spring-boot-demo"
-git push -u origin master
+执行命令：sh ./init_gitlab.sh
 ```
 
 
@@ -209,54 +140,17 @@ git push -u origin master
 
 
 
-## 5、sonarqube初始化（创建service账号，token、回调jenkins webhook）
-
-- **检验sonarqube是否部署成功**
-```
-cd sonarqube-deploy
-source config
-kubectl -n ${namespace} get pod | grep sonarqube
-PS：状态为1/1 Running为成功，如：
-sonarqube-sonarqube-7b65b8bc75-h2vck   1/1     Running   0          146m
-```
-
-- **创建sonarqube service账号、api token**
-```bash
-# 设置sonarqube端口转发到本地
-kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/sonarqube-sonarqube 8885:9000 >/dev/null 2>&1 &
-
-# 创建service用户
-curl -X POST -u admin:${sonarqube_admin_password} -d "login=service&name=service&email=service@nomail.com&password=IkwSNV$32%29sjw" "http://127.0.0.1:8885/api/users/create"
-
-# 创建service用户api token
-curl -X POST -u admin:${sonarqube_admin_password} -d "login=service&name=sonarqube-api-token" "http://127.0.0.1:8885/api/user_tokens/generate"
-
-记录执行结果{..,"token":"a41193c8db28b1fcb184ac5de8a5f7dab7563f7c",..}
-
-# 创建sonarqube回调jenkins webhook，jenkins.demo.com需改为jenkins的fqdn
-curl -u admin:${sonarqube_admin_password} -X POST -d "name=jenkins&url=http://jenkins.demo.com/sonarqube-webhook/" "http://127.0.0.1:8885/api/webhooks/create"
-
-```
-
-
-
-## 6、上传jenkins插件到s3
+## 5、使用脚本初始化sonarqube
 
 ```bash
-命令：
-aws s3api put-object --bucket <bucket-name> --key jenkins-3.3.9-plugins.tar.gz --body jenkins-3.3.9-plugins.tar.gz
+配置init/config参数
 
-示例：
-aws s3api put-object --bucket jack-test-devops --key jenkins-3.3.9-plugins.tar.gz --body jenkins-3.3.9-plugins.tar.gz
+执行命令：sh ./init_sonarqube.sh
 ```
 
 
 
-## 7、赋予jenkins-plugins.tgz插件的s3的下载权限
-
-
-
-## 8、使用脚本部署jenkins
+## 6、使用脚本部署jenkins
 
 ```bash
 配置jenkins-deploy/config参数
@@ -267,6 +161,17 @@ aws s3api put-object --bucket jack-test-devops --key jenkins-3.3.9-plugins.tar.g
 source ./config
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/jenkins 8888:8080 >/dev/null 2>&1 &
 ```
+
+
+
+## 7、使用脚本配置ingress
+
+```bash
+配置nlb/config参数
+执行命令：sh ./run.sh
+```
+
+
 
 
 
@@ -296,10 +201,6 @@ netstat -tnlup | grep 8888 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs 
 ```
 
 
-
-## 11、配置组件域名，供外部访问
-
-> 参考nlb/README.md
 
 
 

@@ -13,6 +13,7 @@ echo "step1. Setup gitlab 80/22 port forward to 0.0.0.0 8886/8887"
 # 配置gitlab端口转发
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8886:80 >/dev/null 2>&1 &
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8887:22 >/dev/null 2>&1 &
+sleep 10
 
 echo "step2. Create service user, api token etc."
 # 创建service用户
