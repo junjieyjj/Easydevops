@@ -7,6 +7,7 @@ PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
 # 加载配置文件
 source ${SCRIPT_BASEDIR}/config
+source ${PROJECT_BASEDIR}/gitlab-deploy/config
 
 echo "step1. Setup gitlab 80/22 port forward to 0.0.0.0 8886/8887"
 # 配置gitlab端口转发
