@@ -483,7 +483,7 @@ spec:
     spec:
       containers:
         - args:
-            - --cluster-name=jack-cluster
+            - --cluster-name=INSERT_CLUSTER_NAME
             - --ingress-class=alb
           image: amazon/aws-alb-ingress-controller:v2.1.0
           livenessProbe:
