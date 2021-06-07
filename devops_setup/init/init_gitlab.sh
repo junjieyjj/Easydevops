@@ -62,7 +62,7 @@ service_user_id=$(curl -s --location --request GET "http://127.0.0.1:8886/api/v4
 
 curl --location --request POST \
 --data-urlencode "key=$ssh_public_key" \
-"http://127.0.0.1:8886/api/v4/users/${service_user_id}/keys?title=gitlab-api-token" \
+"http://127.0.0.1:8886/api/v4/users/${service_user_id}/keys?title=gitlab-ssh-key" \
 --header "Authorization: Bearer ${gitlab_api_token}" 
 
 echo "step5. Git push code to init project"
@@ -70,6 +70,9 @@ echo "step5. Git push code to init project"
 echo 'StrictHostKeyChecking no  
 UserKnownHostsFile /dev/null ' \
 > ~/.ssh/config
+
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/service
 
 git clone ssh://git@127.0.0.1:8887/devops/jenkins-shared-library.git 
 cd jenkins-shared-library
