@@ -74,6 +74,7 @@ UserKnownHostsFile /dev/null ' \
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/service
 
+rm -fr jenkins-shared-library
 git clone ssh://git@127.0.0.1:8887/devops/jenkins-shared-library.git 
 cd jenkins-shared-library
 cp -afr ../code/jenkins-shared-library/* .
@@ -82,6 +83,7 @@ git commit -m "init jenkins-shared-library"
 git push -u origin master
 
 cd ${SCRIPT_BASEDIR}
+rm -fr cicd
 git clone ssh://git@127.0.0.1:8887/devops/cicd.git 
 cd cicd
 cp -afr ../code/cicd/* .
@@ -90,6 +92,7 @@ git commit -m "init cicd"
 git push -u origin master
 
 cd ${SCRIPT_BASEDIR}
+rm -fr spring-boot-demo
 git clone ssh://git@127.0.0.1:8887/poc/spring-boot-demo.git
 cd spring-boot-demo
 cp -afr ../code/spring-boot-demo/* .
