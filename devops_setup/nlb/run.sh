@@ -67,3 +67,36 @@ spec:
         path: /
 """ | kubectl apply -f -
 
+echo
+echo "step4. Renew coredns configmap and restart pod"
+echo """
+apiVersion: v1
+data:
+  Corefile: |
+    .:53 {
+        errors
+        health
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
+          pods insecure
+          fallthrough in-addr.arpa ip6.arpa
+        }
+        rewrite name ${gitlab_fqdn} ingress-nginx-controller.ingress-nginx.svc.cluster.local
+        rewrite name ${jenkins_fqdn} ingress-nginx-controller.ingress-nginx.svc.cluster.local
+        rewrite name ${sonarqube_fqdn} ingress-nginx-controller.ingress-nginx.svc.cluster.local
+        prometheus :9153
+        forward . /etc/resolv.conf
+        cache 30
+        loop
+        reload
+        loadbalance
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    eks.amazonaws.com/component: coredns
+    k8s-app: kube-dns
+  name: coredns
+  namespace: kube-system
+""" | kubectl apply -f -
+
+kubectl -n kube-system get pod | grep coredns | awk '{print $1}' | while read line; do kubectl -n kube-system delete pod $line ; done 
