@@ -19,7 +19,7 @@ echo "step2. Create service user, api token etc."
 curl -X POST -u admin:${sonarqube_admin_password} -d "login=${service_user}&name=${service_user}&email=${service_user}@nomail.com&password=${service_password}" "http://127.0.0.1:8885/api/users/create"
 
 # 创建service用户api token
-sonarqube_api_token=$(curl -X POST -u admin:${sonarqube_admin_password} -d "login=${service_user}&name=sonarqube-api-token" "http://127.0.0.1:8885/api/user_tokens/generate" | jq ".token")
+sonarqube_api_token=$(curl -X POST -u admin:${sonarqube_admin_password} -d "login=${service_user}&name=sonarqube-api-token" "http://127.0.0.1:8885/api/user_tokens/generate" | ${PROJECT_BASEDIR}/tools/jq ".token")
 
 echo ${sonarqube_api_token} > ${SCRIPT_BASEDIR}/sonarqube-api-token
 
