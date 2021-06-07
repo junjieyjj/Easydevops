@@ -3,12 +3,12 @@ SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
-PROJECT_BASEDIR=$(dirname "${CURRENT_PATH}")
+PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
 # 加载配置文件
 source ${SCRIPT_BASEDIR}/config
-source ${PROJECT_BASEDIR}/sonarqube_deploy/config
-source ${PROJECT_BASEDIR}/jenkins_deploy/config
+source ${PROJECT_BASEDIR}/sonarqube-deploy/config
+source ${PROJECT_BASEDIR}/jenkins-deploy/config
 
 echo "step1. Setup sonarqube 9000 port forward to 0.0.0.0 8885"
 # 配置gitlab端口转发
