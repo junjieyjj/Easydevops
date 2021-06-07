@@ -31,7 +31,7 @@ echo "======================================"
 poc_group_id=$(curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
---data-raw '{"path": "poc","name": "poc"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
+--data '{"path": "poc","name": "poc"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
 
 # 创建poc project，替换id值为上面结果的id值
 curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=spring-boot-demo&namespace_id=${poc_group_id}" \
@@ -43,7 +43,7 @@ echo "======================================"
 devops_group_id=$(curl --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
---data-raw '{"path": "devops","name": "devops"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
+--data '{"path": "devops","name": "devops"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
 
 # 创建jenkins-shared-library和cicd project，替换id值为上面结果的id值
 curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=jenkins-shared-library&namespace_id=${devops_group_id}" \
