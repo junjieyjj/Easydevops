@@ -12,7 +12,7 @@ source ${PROJECT_BASEDIR}/jenkins-deploy/config
 # deploy alb controller
 echo "step1. Deploy alb controller"
 
-sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" > v2_1_0_full.yaml
+sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
 
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
 
