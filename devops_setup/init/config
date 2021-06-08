@@ -7,9 +7,6 @@ namespace=devops
 ## 程序用户名密码
 service_password=IkwSNV$32%29sjw
 
-## Gitlab域名
-gitlab_domain=http://127.0.0.1:8886
-
 ## Gitlab service用户api token
 gitlab_api_token=p33McqT6NZrVxzeEmeCy
 

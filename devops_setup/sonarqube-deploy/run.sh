@@ -5,21 +5,15 @@ cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
-# 字体颜色
-RED="\e[31m"
-GREEN="\e[32m"
-ENDCOLOR="\e[0m"
+# include lib/*
+source ${PROJECT_BASEDIR}/lib/*
 
-echo_green(){
-  echo -e "${GREEN}${1} ${ENDCOLOR}"
-}
-
-echo_red(){
-  echo -e "${RED}${1} ${ENDCOLOR}"
-}
-
-# 读取Sonarqube配置
-source ${SCRIPT_BASEDIR}/config
+# include config
+if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
+  [ -f "${SCRIPT_BASEDIR}/config" ] && { source ${SCRIPT_BASEDIR}/config; } || { echo_red "ERROR: ${SCRIPT_BASEDIR}/config not exist"; exit 110; }
+else
+  [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
+fi
 
 # 校验config文件参数
 verify_config(){

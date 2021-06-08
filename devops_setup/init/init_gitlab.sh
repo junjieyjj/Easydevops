@@ -5,17 +5,24 @@ cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
-# 加载配置文件
-source ${SCRIPT_BASEDIR}/config
-source ${PROJECT_BASEDIR}/gitlab-deploy/config
+# include lib/*
+source ${PROJECT_BASEDIR}/lib/*
 
-echo "step1. Setup gitlab 80/22 port forward to 0.0.0.0 8886/8887"
+# include config
+if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
+  [ -f "${SCRIPT_BASEDIR}/config" ] && { source ${SCRIPT_BASEDIR}/config; } || { echo_red "ERROR: ${SCRIPT_BASEDIR}/config not exist"; exit 110; }
+  [ -f "${PROJECT_BASEDIR}/gitlab-deploy/config" ] && { source ${PROJECT_BASEDIR}/gitlab-deploy/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/gitlab-deploy/config not exist"; exit 110; }
+else
+  [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
+fi
+
+echo_green "step1. Setup gitlab 80/22 port forward to 0.0.0.0 8886/8887"
 # 配置gitlab端口转发
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8886:80 >/dev/null 2>&1 &
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8887:22 >/dev/null 2>&1 &
 sleep 10
 
-echo "step2. Create service user, api token etc."
+echo_green "step2. Create service user, api token etc."
 # 创建service用户
 kubectl -n devops exec -it gitlab-0 -- gitlab-rails console <<EOF
 service_user = User.create(:name => "${service_user}", :username => "${service_user}", :email => "${service_user}@nomail.com", :password => "${service_password}", :password_confirmation => "${service_password}", :admin => true)
@@ -26,7 +33,7 @@ service_token.save!
 service_user.save!
 EOF
 
-echo "step3. Create init group and project"
+echo_green "step3. Create init group and project"
 # 创建poc group
 echo "Create poc group and project"
 echo "======================================"
@@ -40,7 +47,7 @@ curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=sprin
 --header "Authorization: Bearer ${gitlab_api_token}"
 
 # 创建devops group
-echo "Create devops group and project"
+echo_green "Create devops group and project"
 echo "======================================"
 devops_group_id=$(curl --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
@@ -54,7 +61,7 @@ curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=jenki
 curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}" \
 --header "Authorization: Bearer ${gitlab_api_token}"
 
-echo "step4. Add service user ssh public key"
+echo_green "step4. Add service user ssh public key"
 # 上传ssh key到service用户
 cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service.pub ~/.ssh/
 cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service ~/.ssh/
@@ -67,7 +74,7 @@ curl --location --request POST \
 "http://127.0.0.1:8886/api/v4/users/${service_user_id}/keys?title=gitlab-ssh-key" \
 --header "Authorization: Bearer ${gitlab_api_token}" 
 
-echo "step5. Git push code to init project"
+echo_green "step5. Git push code to init project"
 # 上传仓库
 echo 'StrictHostKeyChecking no  
 UserKnownHostsFile /dev/null ' \
@@ -102,7 +109,7 @@ git add .
 git commit -m "init spring-boot-demo"
 git push -u origin master
 
-echo "step6. Close port forward and remove local init project"
+echo_green "step6. Close port forward and remove local init project"
 cd ${SCRIPT_BASEDIR}
 rm -fr jenkins-shared-library cicd spring-boot-demo
 rm -fr cicd

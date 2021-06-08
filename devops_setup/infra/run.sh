@@ -81,7 +81,7 @@ create_devops_dir(){
         claimName: busybox-pvc
     """ | kubectl apply -f -
   sleep 15
-  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep ^jenkins$ | wc -l) != 0 ] && { echo "/jenkins目录创建成功"; } || { echo "/jenkins目录创建失败"; }
+  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins | wc -l) != 0 ] && { echo "/jenkins目录创建成功"; } || { echo "/jenkins目录创建失败"; }
   [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep gitlab | wc -l) != 0 ] && { echo "/gitlab目录创建成功"; } || { echo "/gitlab目录创建失败"; }
   [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep sonarqube | wc -l) != 0 ] && { echo "/sonarqube目录创建成功"; } || { echo "/sonarqube目录创建失败"; }
   [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins-slave | wc -l) != 0 ] && { echo "/jenkins-slave目录创建成功"; } || { echo "/jenkins-slave目录创建失败"; }
