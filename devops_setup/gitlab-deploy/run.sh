@@ -1,4 +1,9 @@
 #!/usr/bin/bash
+SCRIPT_BASEDIR=$(dirname "$0")
+
+cd ${SCRIPT_BASEDIR}
+SCRIPT_BASEDIR="$PWD"
+PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
 # 字体颜色
 RED="\e[31m"
@@ -13,8 +18,8 @@ echo_red(){
   echo -e "${RED}${1} ${ENDCOLOR}"
 }
 
-# 读取Sonarqube配置
-. ./config
+# 读取Gitlab配置
+source ${SCRIPT_BASEDIR}/config
 
 # 校验config文件参数
 verify_config(){

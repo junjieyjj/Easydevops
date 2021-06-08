@@ -1,4 +1,9 @@
 #!/usr/bin/bash
+SCRIPT_BASEDIR=$(dirname "$0")
+
+cd ${SCRIPT_BASEDIR}
+SCRIPT_BASEDIR="$PWD"
+PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
 # 字体颜色
 RED="\e[31m"
@@ -14,7 +19,7 @@ echo_red(){
 }
 
 # 读取Jenkins配置
-. ./config
+source ${SCRIPT_BASEDIR}/config
 
 create_namespace(){
     kubectl create ns ${namespace}
@@ -84,7 +89,7 @@ create_devops_dir(){
   sleep 15
   [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep ^jenkins$ | wc -l) != 0 ] && { echo "/jenkins目录创建成功"; } || { echo "/jenkins目录创建失败"; }
   [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep gitlab | wc -l) != 0 ] && { echo "/gitlab目录创建成功"; } || { echo "/gitlab目录创建失败"; }
-  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep sonarqube | wc -l) != 0 ] && { echo "/gitlab目录创建成功"; } || { echo "/gitlab目录创建失败"; }
+  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep sonarqube | wc -l) != 0 ] && { echo "/sonarqube目录创建成功"; } || { echo "/sonarqube目录创建失败"; }
   [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins-slave | wc -l) != 0 ] && { echo "/jenkins-slave目录创建成功"; } || { echo "/jenkins-slave目录创建失败"; }
 
 }
