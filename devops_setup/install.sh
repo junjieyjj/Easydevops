@@ -16,7 +16,7 @@ echo
 # Deploy Sonarqube
 echo "Stage2. deploy sonarqube componment"
 sh sonarqube-deploy/run.sh
-sh init_sonarqube.sh
+sh init/init_sonarqube.sh
 echo "Stage2 done.."
 
 # Deploy Jenkins
