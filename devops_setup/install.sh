@@ -4,37 +4,40 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 
+# include lib
+source utils/*
+
 # Create EFS persistent volume and persistent volume claim
-echo "Stage0. create EFS persistent volume and persistent volume claim"
+echo_light_cyan "Stage0. create EFS persistent volume and persistent volume claim"
 sh infra/run.sh
 revalue=$?
-echo $revalue
 if [[ "${revalue}" == 110 ]]
 then
 	exit 1
 fi
-echo "Stage0 done.."
+echo_light_cyan "Stage0 done.."
 echo
 
 # Deploy Gitlab 
-echo "Stage1. deploy gitlab componment"
+echo_light_cyan "Stage1. deploy gitlab componment"
 sh gitlab-deploy/run.sh
 sh init/init_gitlab.sh
-echo "Stage1 done.."
+echo_light_cyan "Stage1 done.."
 echo
 
 # Deploy Sonarqube
-echo "Stage2. deploy sonarqube componment"
+echo_light_cyan "Stage2. deploy sonarqube componment"
 sh sonarqube-deploy/run.sh
 sh init/init_sonarqube.sh
-echo "Stage2 done.."
+echo_light_cyan "Stage2 done.."
 
 # Deploy Jenkins
-echo "Stage3. deploy jenkins componment"
+echo_light_cyan "Stage3. deploy jenkins componment"
 sh jenkins-deploy/run.sh
-echo "Stage3 done.."
+echo_light_cyan "Stage3 done.."
+echo
 
 # Deploy ingress
-echo "Stage4. deploy ingress componment"
+echo_light_cyan "Stage4. deploy ingress componment"
 sh nlb/run.sh
-echo "Stage4 done.."
+echo_light_cyan "Stage4 done.."
