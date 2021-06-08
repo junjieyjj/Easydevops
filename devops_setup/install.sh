@@ -5,7 +5,7 @@ cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 
 # include lib
-source utils/*
+source lib/*
 
 # Create EFS persistent volume and persistent volume claim
 echo_light_cyan "Stage0. create EFS persistent volume and persistent volume claim"
