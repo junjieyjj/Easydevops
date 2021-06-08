@@ -1,0 +1,23 @@
+# 字体颜色
+RED="\e[31m"
+GREEN="\e[32m"
+LIGHT_CYAN="\e[96m"
+LIGHT_YELLOW="\e[93m"
+ENDCOLOR="\e[0m"
+
+echo_green(){
+  echo -e "${GREEN}${1} ${ENDCOLOR}"
+}
+
+echo_red(){
+  echo -e "${RED}${1} ${ENDCOLOR}"
+}
+
+echo_light_cyan(){
+    echo -e "${LIGHT_CYAN}${1} ${ENDCOLOR}"
+}
+
+echo_light_yellow(){
+    echo -e "${LIGHT_YELLOW}${1} ${ENDCOLOR}"
+}
+

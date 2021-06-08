@@ -1,4 +1,8 @@
 #!/usr/bin/bash
+SCRIPT_BASEDIR=$(dirname "$0")
+
+cd ${SCRIPT_BASEDIR}
+SCRIPT_BASEDIR="$PWD"
 
 # Create EFS persistent volume and persistent volume claim
 echo "Stage0. create EFS persistent volume and persistent volume claim"
