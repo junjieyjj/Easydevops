@@ -29,7 +29,7 @@ curl -X POST -u admin:${sonarqube_admin_password} -d "login=${service_user}&name
 # 创建service用户api token
 sonarqube_api_token=$(curl -s -X POST -u admin:${sonarqube_admin_password} -d "login=${service_user}&name=sonarqube-api-token" "http://127.0.0.1:8885/api/user_tokens/generate" | ${PROJECT_BASEDIR}/tools/jq -r ".token")
 
-echo_green ${sonarqube_api_token} > ${SCRIPT_BASEDIR}/sonarqube-api-token
+echo ${sonarqube_api_token} > ${SCRIPT_BASEDIR}/sonarqube-api-token
 
 # 创建sonarqube回调jenkins webhook
 curl -u admin:${sonarqube_admin_password} -X POST -d "name=jenkins&url=http://${jenkins_fqdn}/sonarqube-webhook/" "http://127.0.0.1:8885/api/webhooks/create"
