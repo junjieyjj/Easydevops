@@ -10,12 +10,10 @@ source ${PROJECT_BASEDIR}/lib/*
 
 # include config
 if [ -z $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
-  [ -f "${SCRIPT_BASEDIR}/config" ] && { source ${SCRIPT_BASEDIR}/config; } || { echo_red "${SCRIPT_BASEDIR}/config not exist"; exit -1; }
+  [ -f "${SCRIPT_BASEDIR}/config" ] && { source ${SCRIPT_BASEDIR}/config; } || { echo_red "${SCRIPT_BASEDIR}/config not exist"; exit 110; }
 else
-  [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "${PROJECT_BASEDIR}/config not exist"; exit -1; }
+  [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
-
-
 
 create_namespace(){
     kubectl create ns ${namespace}

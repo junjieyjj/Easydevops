@@ -7,6 +7,12 @@ SCRIPT_BASEDIR="$PWD"
 # Create EFS persistent volume and persistent volume claim
 echo "Stage0. create EFS persistent volume and persistent volume claim"
 sh infra/run.sh
+revalue=$?
+echo $revalue
+if [[ "${revalue}" == 110 ]]
+then
+	exit 1
+fi
 echo "Stage0 done.."
 echo
 
