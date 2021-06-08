@@ -9,7 +9,7 @@ PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 source ${PROJECT_BASEDIR}/lib/*
 
 # include config
-[ -z $(ps -p $PPID o cmd | grep install.sh | wc -l) ] && { source ${PROJECT_BASEDIR}/config; } || { source ${SCRIPT_BASEDIR}/config; }
+[ -z $(ps -p $PPID o cmd | grep install.sh | wc -l) ] && { source ${SCRIPT_BASEDIR}/config; } || { source ${PROJECT_BASEDIR}/config; }
 
 # 校验config文件参数
 verify_config(){

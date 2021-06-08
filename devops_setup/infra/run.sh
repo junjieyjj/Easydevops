@@ -5,21 +5,11 @@ cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
-# 字体颜色
-RED="\e[31m"
-GREEN="\e[32m"
-ENDCOLOR="\e[0m"
+# include lib/*
+source ${PROJECT_BASEDIR}/lib/*
 
-echo_green(){
-  echo -e "${GREEN}${1} ${ENDCOLOR}"
-}
-
-echo_red(){
-  echo -e "${RED}${1} ${ENDCOLOR}"
-}
-
-# 读取Jenkins配置
-source ${SCRIPT_BASEDIR}/config
+# include config
+[ -z $(ps -p $PPID o cmd | grep install.sh | wc -l) ] && { source ${SCRIPT_BASEDIR}/config; } || { source ${PROJECT_BASEDIR}/config; }
 
 create_namespace(){
     kubectl create ns ${namespace}
