@@ -4,6 +4,8 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
+echo $SCRIPT_BASEDIR
+echo $PROJECT_BASEDIR
 
 # include lib/*
 source ${PROJECT_BASEDIR}/lib/*
@@ -29,7 +31,6 @@ verify_config(){
     [ -z ${file_system_id} ] && { echo_red "file_system_id is Required, Please set it"; exit -1; }
     [ -z ${busybox_image} ] && { echo_red "busybox_image is Required, Please set it"; exit -1; }
     [ -z ${jenkins_image} ] && { echo_red "jenkins_image is Required, Please set it"; exit -1; }
-    [ -z ${jenkins_plugins_url} ] && { echo_red "jenkins_plugins_url is Required, Please set it"; exit -1; }
     [ -z ${namespace} ] && { echo_red "namespace is Required, Please set it"; exit -1; }
     [ -z ${jenkins_slave_namespace} ] && { echo_red "jenkins_slave_namespace is Required, Please set it"; exit -1; }
     [ -z ${requests_cpu} ] && { echo_red "requests_cpu is Required, Please set it"; exit -1; }
@@ -224,7 +225,6 @@ sed -e "s|GITLAB_SSH_KEY_BASE64|${gitlab_ssh_key_base64}|g" \
     -e "s|JENKINS_URL|${jenkins_url}|g" \
     -e "s|GITLAB_FQDN_VAR|${gitlab_fqdn}|g" \
     -e "s|JENKINS_FQDN_VAR|${jenkins_fqdn}|g" \
-    -e "s|JENKINS_PLUGINS_URL|${jenkins_plugins_url}|g" \
     -e "s|K8S_DEFAULT_CONFIG_BASE64|${k8s_default_config_base64}|g" \
     -e "s|SONARQUBE_FQDN_VAR|${sonarqube_fqdn}|g" jcasc.yaml.template \
     > jcasc.yaml
