@@ -1,22 +1,4 @@
 controller:
-  customInitContainers: 
-    - name: custom-init
-      image: "216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.277.3-lts"
-      imagePullPolicy: Always
-      command: 
-        - "/bin/sh"
-        - "-c"
-        - "jenkins_plugins_url=JENKINS_PLUGINS_URL; plugins_tgz=$(echo $jenkins_plugins_url | awk -F'/' '{print $NF}') ;[ -f /var/jenkins_home/${plugins_tgz} ] && (echo Dir:/var/jenkins_home/plugins is existed) || (cd /var/jenkins_home/; curl -O ${jenkins_plugins_url}; tar zxf ${plugins_tgz})"
-      resources:
-        limits:
-          cpu: "1"
-          memory: 2Gi
-        requests:
-          cpu: 500m
-          memory: 1Gi
-      volumeMounts:
-      - mountPath: /var/jenkins_home
-        name: jenkins-home
   initScripts:
     - |
       def jcascFile = new File('/var/jenkins_home/casc_configs/jcasc.yaml')

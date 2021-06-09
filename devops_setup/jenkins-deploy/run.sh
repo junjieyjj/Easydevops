@@ -243,9 +243,9 @@ helm upgrade jenkins ./jenkins \
 --set controller.adminSecret=false \
 --set controller.adminUser=admin \
 --set controller.adminPassword=admin \
---set controller.installPlugins=false \
+--set controller.installPlugins={} \
 --set controller.overwritePlugins=false \
---set controller.overwritePluginsFromImage=false \
+--set controller.overwritePluginsFromImage=true \
 --set controller.initializeOnce=true \
 --set persistence.enabled=true \
 --set controller.serviceType=LoadBalancer \
