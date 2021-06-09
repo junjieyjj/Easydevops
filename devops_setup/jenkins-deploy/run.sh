@@ -243,7 +243,7 @@ helm upgrade jenkins ./jenkins \
 --set controller.adminSecret=false \
 --set controller.adminUser=admin \
 --set controller.adminPassword=admin \
---set controller.installPlugins={} \
+--set controller.installPlugins=false \
 --set controller.overwritePlugins=false \
 --set controller.overwritePluginsFromImage=true \
 --set controller.initializeOnce=true \
