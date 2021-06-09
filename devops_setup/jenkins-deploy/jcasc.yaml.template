@@ -270,11 +270,6 @@ controller:
             allPipelines: false
             elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
             systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
-          violationsToGitLabGlobalConfiguration:
-            apiTokenPrivate: false
-            authMethodHeader: false
-            ignoreCertificateErrors: false
-            minSeverity: INFO
           whitelist:
             enabled: false
         tool:
