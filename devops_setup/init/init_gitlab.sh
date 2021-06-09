@@ -65,6 +65,7 @@ echo_green "step4. Add service user ssh public key"
 # 上传ssh key到service用户
 cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service.pub ~/.ssh/
 cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service ~/.ssh/
+chmod 400 ~/.ssh/service.pub ~/.ssh/service
 
 service_user_id=$(curl -s --location --request GET "http://127.0.0.1:8886/api/v4/users?username=service" \
 --header "Authorization: Bearer ${gitlab_api_token}" | ${PROJECT_BASEDIR}/tools/jq '.[].id')
