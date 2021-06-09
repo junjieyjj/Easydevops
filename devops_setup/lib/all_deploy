@@ -1,5 +1,3 @@
-#!/usr/bin/bash
-
 all_deploy() {
     # Create EFS persistent volume and persistent volume claim
     echo_yellow "Stage0. create EFS persistent volume and persistent volume claim"
