@@ -24,8 +24,8 @@ gitlab_root_password=root1234
 gitlab_external_url=http://gitlab.demo.com
 
 ## Specify the gitlab resources limit
-requests_cpu=1000m
-requests_mem=2048Mi
+requests_cpu=2000m
+requests_mem=4096Mi
 limits_cpu=2000m
 limits_mem=4096Mi
 
