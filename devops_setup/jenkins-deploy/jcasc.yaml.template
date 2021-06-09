@@ -226,11 +226,6 @@ controller:
               readTimeout: 10
               url: "http://GITLAB_FQDN_VAR"
             useAuthenticatedEndpoint: true
-          gitLabServers:
-            servers:
-            - name: "gitlab"
-              secretToken: "GITLAB_API_TOKEN"
-              serverUrl: "http://GITLAB_FQDN_VAR"
           gitSCM:
             addGitTagAction: false
             allowSecondFetch: false
