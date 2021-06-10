@@ -5,6 +5,9 @@ cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
+# include lib/*
+source ${PROJECT_BASEDIR}/lib/*
+
 # include config
 if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
   [ -f "${SCRIPT_BASEDIR}/config" ] && { source ${SCRIPT_BASEDIR}/config; } || { echo_red "ERROR: ${SCRIPT_BASEDIR}/config not exist"; exit 110; }
