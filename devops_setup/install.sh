@@ -54,7 +54,7 @@ all_deploy() {
         exit 1
     fi
     echo_yellow "Stage2 done.."
-    sonarqube_api_token=$(cat init/sonarqube-api-token)
+    export sonarqube_api_token=$(cat init/sonarqube-api-token)
 
     # Deploy Jenkins
     echo_yellow "Stage3. deploy jenkins componment"
