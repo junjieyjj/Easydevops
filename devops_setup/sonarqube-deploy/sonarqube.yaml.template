@@ -5,7 +5,7 @@ extraInitContainers:
     command:
       - sh
       - "-c"
-      - "cp -afr /tmp/sonarqube/extensions/plugins/* /opt/sonarqube/extensions/plugins/"
+      - "[ -f '/opt/sonarqube/extensions/plugins' ] || mkdir -p /opt/sonarqube/extensions/plugins; cp -afr /tmp/sonarqube/extensions/plugins/* /opt/sonarqube/extensions/plugins/"
     volumeMounts:
       - mountPath: /opt/sonarqube/extensions
         name: sonarqube
