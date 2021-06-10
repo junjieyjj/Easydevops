@@ -39,6 +39,8 @@ def call(body) {
                         /* 临时保存group，project信息，格式：MapList<Map> [group: [[NAME: project1],[NAME: project2],]] */
                         Map jobs_map = [:]
                         List<String> group_list = get_group_list(workspace)
+                        println workspace
+                        println group_list
                         group_list.each{ group ->
                             /* 给每个group初始化一个map, 后面用于保存project信息 */
                             jobs_map."${group}" = []
@@ -269,11 +271,13 @@ def get_group_list(workspace){
     ArrayList group_list = []
     new File("${workspace}/AppMetadata").eachFileRecurse() { file -> 
         String path = file.getAbsolutePath()
-        // println path
-        if (path.split('/').size() != 9) {
+        println ("path_1: ${path}")
+        if (path.split('AppMetadata')[1].split('/').size() != 4) {
             return
         }
+        println("path: ${path}")
         String group = path.split('/')[-3]
+        println("group: ${group}")
         if(!group_list.contains(group)){
             group_list.add(group)
         }
