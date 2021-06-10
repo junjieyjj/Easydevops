@@ -56,7 +56,7 @@ ssh_public_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMFez1WfsLWYyFoW6cIe/ODn8o
 # SONARQUBE CONFIG
 # ------------------------------------------------------
 ## Specify the busyBox image which is used to initialize
-busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/busybox:1.32
+busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/centos:7
 
 ## Specify the sonarqube admin user password
 sonarqube_admin_password=admin1234
