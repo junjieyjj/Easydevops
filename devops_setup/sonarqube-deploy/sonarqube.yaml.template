@@ -1,0 +1,18 @@
+extraInitContainers: 
+  - name: "init-plugins"
+    image: "SONARQUBE_PLUGINS_IMAGE"
+    imagePullPolicy: "IfNotPresent"
+    securityContext:
+      runAsNonRoot: true
+    command:
+      - bash
+      - "-c"
+      - "cp -afr /tmp/sonarqube/extensions/plugins/* /opt/sonarqube/extensions/plugins/"
+    volumeMounts:
+      - mountPath: /opt/sonarqube/extensions
+        name: sonarqube
+        subPath: extensions
+    volumes:
+      - name: sonarqube
+        persistentVolumeClaim:
+          claimName: sonarqube-pvc
