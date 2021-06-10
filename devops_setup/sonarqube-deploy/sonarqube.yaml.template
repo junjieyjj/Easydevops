@@ -12,7 +12,3 @@ extraInitContainers:
       - mountPath: /opt/sonarqube/extensions
         name: sonarqube
         subPath: extensions
-    volumes:
-      - name: sonarqube
-        persistentVolumeClaim:
-          claimName: sonarqube-pvc
