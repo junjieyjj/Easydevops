@@ -5,9 +5,13 @@ cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
-# load env config
-source ${SCRIPT_BASEDIR}/config
-source ${PROJECT_BASEDIR}/jenkins-deploy/config
+# include config
+if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
+  [ -f "${SCRIPT_BASEDIR}/config" ] && { source ${SCRIPT_BASEDIR}/config; } || { echo_red "ERROR: ${SCRIPT_BASEDIR}/config not exist"; exit 110; }
+  [ -f "${PROJECT_BASEDIR}/jenkins-deploy/config" ] && { source ${PROJECT_BASEDIR}/jenkins-deploy/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/jenkins-deploy/config not exist"; exit 110; }
+else
+  [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
+fi
 
 # deploy alb controller
 echo "step1. Deploy alb controller"

@@ -29,14 +29,14 @@ requests_mem=4096Mi
 limits_cpu=2000m
 limits_mem=4096Mi
 
-## Specify the postgresql which gitlab connect
+## Specify the postgresql which gitlab connect to
 gitlab_postgresql_db_host=gitlab.cluster-cof70yepyr2j.ap-east-1.rds.amazonaws.com
 gitlab_postgresql_db_database=gitlab
 gitlab_postgresql_db_username=devops
 gitlab_postgresql_db_password=admin1234
 gitlab_postgresql_db_port=5432
 
-## Specify the redis which gitlab connect
+## Specify the redis which gitlab connect to
 gitlab_redis_host=gitlab-redis.fob5vn.ng.0001.ape1.cache.amazonaws.com
 gitlab_redis_port=6379
 
@@ -65,66 +65,68 @@ sonarqube_admin_password=admin1234
 sonarqube_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sonarqube:8.5.1-community
 sonarqube_plugins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sonarqube-plugins:8.5.1
 
-## curl镜像地址
+## Specify the curl image url
 curl_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/curl:latest
 
-## sonarqube连接postgresql参数
+## Specify the postgresql which sonarqube connect to
 sonarqube_postgresql_db_host=sonarqube.cluster-cof70yepyr2j.ap-east-1.rds.amazonaws.com
 sonarqube_postgresql_db_database=sonar3
 sonarqube_postgresql_db_username=postgres
 sonarqube_postgresql_db_password=admin1234
 sonarqube_postgresql_db_port=5431
 
-## sonarqube的资源限制
+## Specify the sonarqube resources limit
 requests_cpu=501m
 requests_mem=1024Mi
 limits_cpu=4000m
 limits_mem=8096Mi
 
-## sonarqube的javaopts参数
+## Specify the sonarqube java opts
 sonarqube_javaopts="-Xms128m -Xmx1024m "
 
 
 # JENKINS CONFIG
 # ------------------------------------------------------
-## S3桶名称，用于存放Jenkins插件包
-s3_bucket_name=jack-test-devops
-
-## jenkins镜像地址
+## Specify the jenkins image url
 jenkins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.293-plugins
 
-## jenkins的资源限制
+## Specify the jenkins resources limit
 requests_cpu=500m
 requests_mem=1024Mi
 limits_cpu=1000m
 limits_mem=2048Mi
 
-## jenkins的javaopts参数
+## Specify the jenkins java opts
 jenkins_javaopts="-Xms128m -Xmx1024m "
 
-## ssh私钥，base64编码后的值
+## Specify the ssh private key by base64 encode
 gitlab_ssh_key_base64='LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBekJYczlWbjdDMW1NaGFGdW5DSHZ6ZzUvS0c1WmFDOEY0OEdnTHdMRU9Yc1NnK1VXCnJmbHFPSjQ0MWpCenVQS3paekNYSjZidGdMdnpYZHBEQlpHd2RvU2YzNjVTQUIyeWJtTERnc2lzblNzQ2MwcHIKYS9BQjFRSjYva3lMNEtaL2pBclRnRnlDTkRMTEVXTnVWQ0M4QWVXTHh2b2liMkU1R1FBcWVkYTBZYkJkNmdDUQpNVHdSYURjVklmUGh6NGNsM1ZoeGNqZnhKWmdVRFI5MWUxZXhWSFB4V29va1hmUDZNNGUyTEtBWTdRdmYwYmZXCm9RUVhlOExhOHprTG82WW93TndaU1JhQnJOVWRhMnBpNWNpMCtUUzg5TWpkYWV2dUl0d2dqRkI3UGFHTHptR3UKb2w0VzFCZHlpR1AySjNveTRCOTRRNHNvTkU3MVNkQjIrWUtuTVFJREFRQUJBb0lCQVFDam5saHhoQWhPMnlaYgo1RWJIaWpXMTM4MTJYckh6WXUrMzMzNUs4azdiUHA1amZBRW96Yk9wWE1CNGlEUGU3VVdEejJMLytVYWtWUXNTCkRYQjZRSWxYRzVFSlJicWNPVExhYVBnU0hFeTNYTW9FSUgvcTgycWttZTU5Zm1VT1lLNFZXb0NpZ29nb3pTZ2MKOHJoN1hoc2M4aW1VQnVvZ25iT25KWWpvVVlnZ1lGVGJMdzQ2ZS9JMERiOFMrcGhiWjkzNlRvUklIenNCcHlMNApSdUFXS2JHZHlFR3ZTN0ZKMUIzUDArR2R3dkFURTRHaXV0U1JMUFZXMDM3cnIzNHNsSzVEZzhIMExsN0R6UGE2CjRtNmhSVjI5SXVLYnVKY0dDM1hGZzhna0ZsODhSUUU0cmIrVE5uZnYrUkRNUWlkMXlhaGJab2ZsV3FLUWtrakoKbnJFZnluR0JBb0dCQU92UnV1ejJpRWRudU5FaUUrRVA2eS9XTnJrMFhzbi9wMGRPWWtld1g5VGtBWHFvT2ZvbQo3VTdPZS9NNTZwU2Fxb3dUYU5YdEU5ei9uYmtod0EvbGV2U0tva3g0eCsxODRxUmNPVVRsZzEveFdTd0NoQVFUCjFWVGRQYm9TMkxJZHd2d2pFS3J6ZFR3bERMQWl6YTl5SGRpbENVVkYydFVaL1JpNTRSNDZKU21KQW9HQkFOMk0KKzd6UG96L0k1QS9TenRPU2xCSW8zWFM4M0k3YkE0a2NXeUNJLzVsd0lzdG1EaGdCTUt1Zy9JT1NMNjBCWUNBRQptcERReG1INGxzM043dXc2cHRSUysyRDYvSlZUbXBwMjZ0VDFCQTdaQmF4OXlUdzdJZVRDTFJ5R0FiYTd1NXdmCjArY0ZEUytxQk1nOHRDOEhoWXJJYlhjaXFyak5HWHVHc0p0KzNpNXBBb0dCQU5uUFdZdk5HWXA2YnVZYlI2azAKL3RHc1ZkY3lXK3JQU3o0OVUrRkxNdmg3c0RJT2Q1NXBuZjZRRVVSU1Zpenp2bHFyQXNXMHVBZ0R3VFpoeWZmawp5WEJkTEJMZDdDdWFrZXVsa3UvajNUZ2N2M1E2enB6RmhPRmhoOFg1NmxSNTBNTDUwRWRWbnc3eVdZbkdXNXlWCkZxUW5xeXhrblA3L2hobjBkYzFwZnpHaEFvR0JBTFhzaWQ1dUJoaGZadDZUZFdDSVVXeGtBQTFXOUNtZU1GWUwKWWN6aWtqZzF1MnlYL2VTNlBYUUJlcml6ZHRDeWUzTnZORmpNQnNyMkxTY0wvakFlclZWV1dyTTFCZW04d0F3cwpzQUowdTROUnMvWURTQlpjWENXVFNTWE42R1JiM2QrQ3h5ZEJuNlZQRUNRNHJLQ2RwWXZqcnZlUUVPNDFCTUxKClJBWTdkRWhaQW9HQUkzWnhlMFFYczJmU2htK0tldkZRODZvQUtVTVJ2cmdhNERVZHAyMFlhenMrSVJ5ZTdHbkYKYitobHBobUlYSnVGWG5OeWpodmh0MHVjQlpoL2xPRlBqZGpOamk2OXp2akdGOGU5VnhhSEZxS2NCRXA2UTdKLwoxWXEvYVp6L2VaMVgyUTVBK2ZrQmtoc2tJUnBzdHJvUHdabGp0cVYwckRsYzAyTURZaXBKUTdFPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo='
 
-## gitlab密码
+## Specify the gitlab service user password
 gitlab_http_password='IkwSNV$32%29sjw'
 
-## gitlab api token
+## Specify the gitlab api token, add to service user
 gitlab_api_token='p33McqT6NZrVxzeEmeCy'
 
-## 域名配置
+## Specify the fqdn of gitlab/jenkins/sonarqube
 gitlab_fqdn='gitlab.demo.com'
 jenkins_fqdn='jenkins.demo.com'
 sonarqube_fqdn='sonarqube.demo.com'
 
-## kubernetes动态slave配置，需使用kubernetes集群内部service name
+## Specify jenkins kubernetes slave params, jenkins master will be communicated to jenkins slave pod by kubernetes service name 
 jenkins_tunnel='jenkins-agent.devops.svc.cluster.local:50000'
 jenkins_url='http://jenkins.devops.svc.cluster.local:8080'
 jenkins_slave_namespace='jenkins-slave'
 
-## aws ecr配置相关
+## Specify ak sk for aws ecr account
 aws_access_key='AKIATETRFRPDKSP5G7FT'
 aws_secret_key='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'
 
-## k8s
+## Specify deploy kubernetes config
 ## 默认cd的k8s集群 default config，base64编码后的值
 k8s_default_config_base64=''
+
+# NLB INGRESS
+# ------------------------------------------------------
+## Specify the eks name
+cluster_name=jack-test
