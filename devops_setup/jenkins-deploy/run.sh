@@ -4,8 +4,6 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
-echo $SCRIPT_BASEDIR
-echo $PROJECT_BASEDIR
 
 # include lib/*
 source ${PROJECT_BASEDIR}/lib/*
@@ -65,23 +63,23 @@ create_jenkins_pv(){
 
 create_jenkins_pvc(){
   # 创建jenkins pvc
-  echo '
+  echo """
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: jenkins-pvc
-    namespace: devops
+    namespace: ${namespace}
   spec:
     accessModes:
       - ReadWriteMany
-    storageClassName: ""
+    storageClassName: ''
     resources:
       requests:
         storage: 5Ti
     selector:
       matchLabels:
         pv: jenkins-pv
-  ' | kubectl apply -f -
+  """ | kubectl apply -f -
   jenkins_pvc_status=$(kubectl -n ${namespace} get pvc jenkins-pvc | grep Bound | wc -l)
   [ ${jenkins_pvc_status} == 1 ] && echo "jenkins pv pvc创建成功" || { echo_red "jenkins pv pvc创建失败"; exit -1; }
 }
