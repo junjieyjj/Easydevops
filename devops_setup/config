@@ -63,6 +63,7 @@ sonarqube_admin_password=admin1234
 
 ## Specify the sonarqube image url
 sonarqube_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sonarqube:8.5.1-community
+sonarqube_plugins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sonarqube-plugins:8.5.1
 
 ## curl镜像地址
 curl_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/curl:latest
@@ -91,9 +92,6 @@ s3_bucket_name=jack-test-devops
 
 ## jenkins镜像地址
 jenkins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.277.3-lts
-
-## jenkins插件下载地址
-jenkins_plugins_url=https://jack-test-devops.s3.ap-east-1.amazonaws.com/jenkins-3.3.9-plugins.tar.gz
 
 ## jenkins的资源限制
 requests_cpu=500m
