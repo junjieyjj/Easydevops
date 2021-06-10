@@ -91,7 +91,7 @@ sonarqube_javaopts="-Xms128m -Xmx1024m "
 s3_bucket_name=jack-test-devops
 
 ## jenkins镜像地址
-jenkins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.277.3-lts
+jenkins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.293-plugins
 
 ## jenkins的资源限制
 requests_cpu=500m
