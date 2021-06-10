@@ -22,7 +22,6 @@ verify_config(){
     [ -z ${AWS_DEFAULT_REGION} ] && { echo_red "AWS_DEFAULT_REGION is Required, Please set it"; exit -1; }
     [ -z ${EKS_CLUSTER} ] && { echo_red "EKS_CLUSTER is Required, Please set it"; exit -1; }
     [ -z ${AWS_ACCOUNT_ID} ] && { echo_red "AWS_ACCOUNT_ID is Required, Please set it"; exit -1; }
-    [ -z ${s3_bucket_name} ] && { echo_red "s3_bucket_name is Required, Please set it"; exit -1; }
     [ -z ${file_system_id} ] && { echo_red "file_system_id is Required, Please set it"; exit -1; }
     [ -z ${busybox_image} ] && { echo_red "busybox_image is Required, Please set it"; exit -1; }
     [ -z ${jenkins_image} ] && { echo_red "jenkins_image is Required, Please set it"; exit -1; }
