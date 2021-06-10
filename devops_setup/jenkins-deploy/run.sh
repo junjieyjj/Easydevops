@@ -15,9 +15,6 @@ else
   [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
 
-# 读取Jenkins配置
-source ${SCRIPT_BASEDIR}/config
-
 # 校验config文件参数
 verify_config(){
     [ -z ${AWS_ACCESS_KEY_ID} ] && { echo_red "AWS_ACCESS_KEY_ID is Required, Please set it"; exit -1; }

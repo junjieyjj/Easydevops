@@ -14,7 +14,7 @@ else
 fi
 
 # deploy alb controller
-echo "step1. Deploy alb controller"
+echo_green "step1. Deploy alb controller"
 
 sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
 
@@ -23,7 +23,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 kubectl apply -f v2_1_0_full.yaml
 
 echo
-echo "step2. Deploy ingress nginx controller"
+echo_green "step2. Deploy ingress nginx controller"
 echo """
 apiVersion: v1
 data:
@@ -37,7 +37,7 @@ metadata:
 kubectl apply -f ingress-nginx.yaml
 
 echo
-echo "step3. Deploy devops ingress resources"
+echo_green "step3. Deploy devops ingress resources"
 echo """
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -72,7 +72,7 @@ spec:
 """ | kubectl apply -f -
 
 echo
-echo "step4. Renew coredns configmap and restart pod"
+echo_green "step4. Renew coredns configmap and restart pod"
 echo """
 apiVersion: v1
 data:
