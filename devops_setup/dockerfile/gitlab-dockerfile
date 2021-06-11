@@ -1,4 +1,0 @@
-FROM 216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/gitlab-ce:12.10.14-ce.0
-
-ADD gitlab.tar.gz /var/opt/
-

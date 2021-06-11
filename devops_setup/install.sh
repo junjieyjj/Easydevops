@@ -84,6 +84,7 @@ echo 'Easy DevOps
 2. Gitlab upgrade
 3. Sonarqube upgrade
 4. Jenkins upgrade
+5. Delete all resources
 ------------------------------------------------------------------
 '
 read -p "please give me your choice: " choice
