@@ -15,9 +15,6 @@ else
   [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
 
-# 读取Jenkins配置
-source ${SCRIPT_BASEDIR}/config
-
 # 校验config文件参数
 verify_config(){
     [ -z ${AWS_ACCESS_KEY_ID} ] && { echo_red "AWS_ACCESS_KEY_ID is Required, Please set it"; exit -1; }
@@ -25,11 +22,9 @@ verify_config(){
     [ -z ${AWS_DEFAULT_REGION} ] && { echo_red "AWS_DEFAULT_REGION is Required, Please set it"; exit -1; }
     [ -z ${EKS_CLUSTER} ] && { echo_red "EKS_CLUSTER is Required, Please set it"; exit -1; }
     [ -z ${AWS_ACCOUNT_ID} ] && { echo_red "AWS_ACCOUNT_ID is Required, Please set it"; exit -1; }
-    [ -z ${s3_bucket_name} ] && { echo_red "s3_bucket_name is Required, Please set it"; exit -1; }
     [ -z ${file_system_id} ] && { echo_red "file_system_id is Required, Please set it"; exit -1; }
     [ -z ${busybox_image} ] && { echo_red "busybox_image is Required, Please set it"; exit -1; }
     [ -z ${jenkins_image} ] && { echo_red "jenkins_image is Required, Please set it"; exit -1; }
-    [ -z ${jenkins_plugins_url} ] && { echo_red "jenkins_plugins_url is Required, Please set it"; exit -1; }
     [ -z ${namespace} ] && { echo_red "namespace is Required, Please set it"; exit -1; }
     [ -z ${jenkins_slave_namespace} ] && { echo_red "jenkins_slave_namespace is Required, Please set it"; exit -1; }
     [ -z ${requests_cpu} ] && { echo_red "requests_cpu is Required, Please set it"; exit -1; }
@@ -64,23 +59,23 @@ create_jenkins_pv(){
 
 create_jenkins_pvc(){
   # 创建jenkins pvc
-  echo '
+  echo """
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: jenkins-pvc
-    namespace: devops
+    namespace: ${namespace}
   spec:
     accessModes:
       - ReadWriteMany
-    storageClassName: ""
+    storageClassName: ''
     resources:
       requests:
         storage: 5Ti
     selector:
       matchLabels:
         pv: jenkins-pv
-  ' | kubectl apply -f -
+  """ | kubectl apply -f -
   jenkins_pvc_status=$(kubectl -n ${namespace} get pvc jenkins-pvc | grep Bound | wc -l)
   [ ${jenkins_pvc_status} == 1 ] && echo "jenkins pv pvc创建成功" || { echo_red "jenkins pv pvc创建失败"; exit -1; }
 }
@@ -224,7 +219,6 @@ sed -e "s|GITLAB_SSH_KEY_BASE64|${gitlab_ssh_key_base64}|g" \
     -e "s|JENKINS_URL|${jenkins_url}|g" \
     -e "s|GITLAB_FQDN_VAR|${gitlab_fqdn}|g" \
     -e "s|JENKINS_FQDN_VAR|${jenkins_fqdn}|g" \
-    -e "s|JENKINS_PLUGINS_URL|${jenkins_plugins_url}|g" \
     -e "s|K8S_DEFAULT_CONFIG_BASE64|${k8s_default_config_base64}|g" \
     -e "s|SONARQUBE_FQDN_VAR|${sonarqube_fqdn}|g" jcasc.yaml.template \
     > jcasc.yaml
@@ -245,7 +239,7 @@ helm upgrade jenkins ./jenkins \
 --set controller.adminPassword=admin \
 --set controller.installPlugins=false \
 --set controller.overwritePlugins=false \
---set controller.overwritePluginsFromImage=false \
+--set controller.overwritePluginsFromImage=true \
 --set controller.initializeOnce=true \
 --set persistence.enabled=true \
 --set controller.serviceType=LoadBalancer \

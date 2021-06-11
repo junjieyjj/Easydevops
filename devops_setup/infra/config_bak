@@ -13,7 +13,7 @@ s3_bucket_name=jack-test-devops
 file_system_id=fs-b7225f7a
 
 # busybox镜像地址
-busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/busybox:1.32
+busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/centos:7
 
 # namespace名称
 namespace=devops

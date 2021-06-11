@@ -31,6 +31,7 @@ verify_config(){
     [ -z ${requests_mem} ] && { echo_red "requests_mem is Required, Please set it"; exit -1; }
     [ -z ${limits_cpu} ] && { echo_red "limits_cpu is Required, Please set it"; exit -1; }
     [ -z ${limits_mem} ] && { echo_red "limits_mem is Required, Please set it"; exit -1; }
+    [ -z ${sonarqube_plugins_image} ] && { echo_red "sonarqube_plugins_image is Required, Please set it"; exit -1; }
 }
 
 
@@ -87,6 +88,9 @@ echo_green "step1. 创建sonarqube-pv、sonarqube-pvc"
 [ $(kubectl -n ${namespace} get pvc sonarqube-pvc 2>/dev/null | wc -l ) == 0 ] && { echo "创建sonarqube-pvc"; create_sonarqube_pvc; } || { echo "命名空间${namespace}下sonarqube-pvc已存在，不需创建"; }
 
 # 使用helm搭建Jenkins
+sed -e "s|SONARQUBE_PLUGINS_IMAGE|${sonarqube_plugins_image}|g" \
+sonarqube.yaml.template > sonarqube.yaml
+
 echo_green "step2. helm部署Sonarqube"
 helm upgrade sonarqube ./sonarqube \
 --version 3.5.4 \
@@ -116,7 +120,8 @@ helm upgrade sonarqube ./sonarqube \
 --set-string resources.requests.memory=${requests_mem} \
 --set-string resources.limits.cpu=${limits_cpu} \
 --set-string resources.limits.memory=${limits_mem} \
---set-string jvmOpts="${sonarqube_javaopts}"
+--set-string jvmOpts="${sonarqube_javaopts}" \
+-f sonarqube.yaml
 
 
 # 检查jenkins statefulset启动状态

@@ -1,0 +1,12 @@
+extraInitContainers: 
+  - name: "init-plugins"
+    image: "SONARQUBE_PLUGINS_IMAGE"
+    imagePullPolicy: "IfNotPresent"
+    command:
+      - sh
+      - "-c"
+      - "[ -f '/opt/sonarqube/extensions/plugins' ] || mkdir -p /opt/sonarqube/extensions/plugins; cp -afr /tmp/sonarqube/extensions/plugins/* /opt/sonarqube/extensions/plugins/"
+    volumeMounts:
+      - mountPath: /opt/sonarqube/extensions
+        name: sonarqube
+        subPath: extensions
