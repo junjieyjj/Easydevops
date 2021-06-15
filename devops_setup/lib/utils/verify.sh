@@ -50,7 +50,7 @@ check_ssh(){
   user=$1
   host=${2-"127.0.0.1"}
   port=${3-"22"}
-  ssh -v -p ${port} ${user}@${host}
+  ssh -v -p ${port} ${user}@${host} > /dev/null 2>&1
   [ $? -eq 0 ] && { echo "ssh test by user: ${user}, host: ${host}, port: ${port} successful"; } || { echo "ERROR: ssh test by user: ${user}, host: ${host}, port: ${port} failed"; exit 110; }
 }
 
