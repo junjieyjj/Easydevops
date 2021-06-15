@@ -56,6 +56,7 @@ check_http http://127.0.0.1:8886
 logger_info "Create poc group and project"
 logger_info "======================================"
 logger_info "1. create poc group"
+logger_debug "call api command: curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' --header \"Authorization: Bearer ***********}\" --header 'Content-Type: application/json' --data '{\"path\": \"poc\",\"name\": \"poc\"}'"
 poc_group_id=$(curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
@@ -72,7 +73,7 @@ logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/p
 logger_info "Create devops group and project"
 logger_info "======================================"
 logger_info "1. create devops group"
-devops_group_id=$(curl --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
+devops_group_id=$(curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
 --data '{"path": "devops","name": "devops"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
@@ -80,12 +81,12 @@ logger_debug "devops_group_id: ${devops_group_id}"
 
 # 创建jenkins-shared-library和cicd project，替换id值为上面结果的id值
 logger_info "2. create jenkins-shared-library project"
-logger_debug $(curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=jenkins-shared-library&namespace_id=${devops_group_id}" \
+logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=jenkins-shared-library&namespace_id=${devops_group_id}" \
 --header "Authorization: Bearer ${gitlab_api_token}")
 
 
 logger_info "3. create cicd project"
-logger_debug $(curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}" \
+logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}" \
 --header "Authorization: Bearer ${gitlab_api_token}")
 
 logger_info "step4. Add service user ssh public key"
