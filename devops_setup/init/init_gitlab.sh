@@ -35,8 +35,8 @@ logger_info "step1. Setup gitlab 80/22 port forward to 0.0.0.0 8886/8887"
 # 配置gitlab端口转发
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8886:80 >/dev/null 2>&1 &
 kubectl -n ${namespace} port-forward --address 0.0.0.0 svc/gitlab 8887:22 >/dev/null 2>&1 &
-check_port_listen 8886
-check_port_listen 8887
+check_local_port_listen 8886
+check_local_port_listen 8887
 
 logger_info "step2. Create service user, api token etc."
 # 创建service用户

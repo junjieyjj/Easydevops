@@ -8,7 +8,22 @@ check_port_listen(){
   n=0
   until [ "$n" -ge ${retry_times} ]
   do
-    curl -s 127.0.0.1:${port} > /dev/null
+    curl -s ${host}:${port} > /dev/null
+    [ $? -eq 0 ] && break || echo "wait port ${port} listen..."
+    n=$((n+1)) 
+    sleep ${timeout}
+  done
+  [ "$n" -eq ${retry_times} ] && { echo "ERROR: listen port ${port} failed"; exit 110; }
+}
+
+check_local_port_listen(){
+  port=${1-"80"}
+  timeout=${2-"2"}
+  retry_times=${3-"5"}
+  n=0
+  until [ "$n" -ge ${retry_times} ]
+  do
+    netstat -tnlup | grep -w ${port} > /dev/null
     [ $? -eq 0 ] && break || echo "wait port ${port} listen..."
     n=$((n+1)) 
     sleep ${timeout}
