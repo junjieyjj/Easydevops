@@ -99,7 +99,6 @@ helm upgrade gitlab ./gitlab-ce \
 --version 1.0.0 \
 --create-namespace \
 --install \
---debug \
 --set image=${gitlab_image} \
 --set externalUrl=${gitlab_external_url} \
 --set gitlabRootPassword=${gitlab_root_password} \
