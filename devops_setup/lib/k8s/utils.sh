@@ -4,7 +4,7 @@ create_pv(){
     storage_type=$1
     case "${storage_type}" in
     "efs")
-        create_efs_pv()
+        create_efs_pv
         ;;
     "ebs")
         echo "in developing" 
@@ -25,7 +25,7 @@ create_pvc(){
     storage_type=$1
     case "${storage_type}" in
     "efs")
-        create_efs_pvc()
+        create_efs_pvc
         ;;
     "ebs")
         echo "in developing" 
