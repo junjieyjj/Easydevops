@@ -62,7 +62,38 @@ sed -e "s|GITLAB_EXTERNAL_URL|${gitlab_external_url}|" \
 
 
 # 使用helm搭建Jenkins
-echo_green "step2. helm deploy Gitlab"
+logger_info "step2. helm deploy Gitlab"
+helm upgrade gitlab ./gitlab-ce \
+--namespace ${namespace}  \
+--version 1.0.0 \
+--create-namespace \
+--install \
+--debug \
+--set image=${gitlab_image} \
+--set externalUrl=${gitlab_external_url} \
+--set gitlabRootPassword=${gitlab_root_password} \
+--set service.type=ClusterIP \
+--set service.ssh.port=22 \
+--set service.http.port=80 \
+--set service.https.port=443 \
+--set ingress.enabled=false \
+--set-string resources.requests.cpu=${requests_cpu} \
+--set-string resources.requests.memory=${requests_mem} \
+--set-string resources.limits.cpu=${limits_cpu} \
+--set-string resources.limits.memory=${limits_mem} \
+--set persistence.enabled=true \
+--set persistence.pvcName=gitlab-pvc \
+--set persistence.mountInfo[0].name=gitlab-pvc,\
+persistence.mountInfo[0].mountPath=/etc/gitlab,\
+persistence.mountInfo[0].subPath=config \
+--set persistence.mountInfo[1].name=gitlab-pvc,\
+persistence.mountInfo[1].mountPath=/var/log/gitlab,\
+persistence.mountInfo[1].subPath=logs \
+--set persistence.mountInfo[2].name=gitlab-pvc,\
+persistence.mountInfo[2].mountPath=/var/opt/gitlab,\
+persistence.mountInfo[2].subPath=data \
+-f gitlab.yaml --dry-run > ${LOG_DIR}/helm-gitlab.yaml
+
 helm upgrade gitlab ./gitlab-ce \
 --namespace ${namespace}  \
 --version 1.0.0 \
