@@ -60,7 +60,6 @@ sed -e "s|GITLAB_EXTERNAL_URL|${gitlab_external_url}|" \
     -e "s/GITLAB_REDIS_PORT/${gitlab_redis_port}/" gitlab.yaml.template \
     > gitlab.yaml
 
-
 # 使用helm搭建Jenkins
 logger_info "step2. helm deploy Gitlab"
 helm upgrade gitlab ./gitlab-ce \
@@ -124,10 +123,12 @@ persistence.mountInfo[2].mountPath=/var/opt/gitlab,\
 persistence.mountInfo[2].subPath=data \
 -f gitlab.yaml
 
+rm -f gitlab.yaml
+
 # 检查jenkins statefulset启动状态
 logger_info "step3. check gitlab status"
 kubectl -n ${namespace} rollout status statefulset gitlab --timeout 5m
 
-[ $? == 0 ] && { logger_info "gitlab deploy successful"; } || { logger_error "gitlab deploy failed"; }
+[ $? == 0 ] && { logger_info "gitlab deploy successful"; } || { logger_error "gitlab deploy failed"; exit 110; }
 
 

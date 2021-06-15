@@ -4,9 +4,13 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
+LOG_DIR=${PROJECT_BASEDIR}/logs
 
-# include lib/*
-source ${PROJECT_BASEDIR}/lib/*
+# include lib
+source ${PROJECT_BASEDIR}/lib/utils/logger.sh
+source ${PROJECT_BASEDIR}/lib/utils/utils.sh
+source ${PROJECT_BASEDIR}/lib/utils/verify.sh
+source ${PROJECT_BASEDIR}/lib/k8s/utils.sh
 
 # include config
 if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
@@ -15,11 +19,8 @@ else
   [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
 
-create_namespace(){
-    kubectl create ns ${namespace}
-}
 
-create_devops_dir(){
+create_busybox_pv(){
   echo """
   apiVersion: v1
   kind: PersistentVolume
@@ -32,14 +33,16 @@ create_devops_dir(){
       storage: 5Gi
     volumeMode: Filesystem
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     persistentVolumeReclaimPolicy: Retain
     storageClassName: ""
     csi:
       driver: efs.csi.aws.com
       volumeHandle: ${file_system_id}
   """ | kubectl apply -f -
+}
 
+create_busybox_pvc(){
   # 创建busybox-pvc
   echo """
   apiVersion: v1
@@ -49,7 +52,7 @@ create_devops_dir(){
     namespace: ${namespace}
   spec:
     accessModes:
-      - ReadWriteOnce
+      - ReadWriteMany
     storageClassName: ''
     resources:
       requests:
@@ -58,7 +61,9 @@ create_devops_dir(){
       matchLabels:
         pv: busybox-pv
   """ | kubectl apply -f -
+}
 
+create_devops_dir(){
   # 创建busybox pod预创建目录    
   echo """
   apiVersion: v1
@@ -80,24 +85,38 @@ create_devops_dir(){
       persistentVolumeClaim:
         claimName: busybox-pvc
     """ | kubectl apply -f -
-  sleep 15
-  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins | wc -l) != 0 ] && { echo "/jenkins目录创建成功"; } || { echo "/jenkins目录创建失败"; }
-  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep gitlab | wc -l) != 0 ] && { echo "/gitlab目录创建成功"; } || { echo "/gitlab目录创建失败"; }
-  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep sonarqube | wc -l) != 0 ] && { echo "/sonarqube目录创建成功"; } || { echo "/sonarqube目录创建失败"; }
-  [ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins-slave | wc -l) != 0 ] && { echo "/jenkins-slave目录创建成功"; } || { echo "/jenkins-slave目录创建失败"; }
-
+  check_k8s_pod_status ${namespace} busybox
 }
 
-# 创建命名空间
-echo_green "step1. 创建命名空间${namespace}"
-create_namespace
+# check aws config
+check_aws_env
 
-# 创建efs持久化目录
-echo_green "step2. 创建持久化目录/jenkins、/gitlab、/sonarqube、/jenkins-slave"
-echo_green "setp6. 清理busybox资源"
-# 删除busybox pod
+# check config params
+verify_params_null \
+  ${file_system_id} \
+  ${namespace} \
+  ${busybox_image} 
+
+# create namespace
+logger_info "step1. create namespace ${namespace}"
+create_namespace ${namespace} 
+
+# delete busybox resources
+logger_info "setp2. delete busybox resources"
 kubectl -n ${namespace} delete pod busybox
 kubectl -n ${namespace} delete pvc busybox-pvc
 kubectl -n ${namespace} delete pv busybox-pv
-create_devops_dir
 
+logger_info "step3. create busybox-pv、busybox-pvc"
+create_busybox_pv
+check_pv_status busybox-pv
+create_busybox_pvc
+check_pvc_status ${namespace} busybox-pvc
+
+# create efs dir
+logger_info "step2. create busybox pod and create shared volume dir, /jenkins、/gitlab、/sonarqube、/jenkins-slave"
+create_devops_dir
+[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins | wc -l) != 0 ] && { logger_info "create dir /jenkins successful"; } || { logger_error "create dir /jenkins failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep gitlab | wc -l) != 0 ] && { logger_info "create dir /gitlab successful"; } || { logger_error "create dir /gitlab failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep sonarqube | wc -l) != 0 ] && { logger_info "create dir /sonarqube successful"; } || { logger_error "create dir /sonarqube failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins-slave | wc -l) != 0 ] && { logger_info "create dir /jenkins-slave successful"; } || { logger_error "create dir /jenkins-slave failed"; exit 110; }

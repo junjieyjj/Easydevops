@@ -1,3 +1,8 @@
+create_namespace(){
+    namespace=$1
+    kubectl create ns ${namespace}
+}
+
 create_pv(){
     # AWS: efs、ebs
     # Aliyun: flexvolume

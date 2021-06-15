@@ -67,3 +67,19 @@ verify_params_null(){
       [ -z ${arg} ] && { echo "ERROR: ${arg} is Required, Please set it"; exit 110; }
   done
 }
+
+check_k8s_pod_status(){
+  namespace=${1}
+  pod=${2}
+  timeout=${3-"10"}
+  retry_times=${4-"5"}
+  n=0
+  until [ "$n" -ge ${retry_times} ]
+  do
+    kubectl -n ${namespace} get pod ${pod} | grep Running > /dev/null
+    [ $? -eq 0 ] && break || echo "wait pod ${pod} start..."
+    n=$((n+1)) 
+    sleep ${timeout}
+  done
+  [ "$n" -eq ${retry_times} ] && { echo "ERROR: pod ${pod} start failed"; exit 110; }
+}
