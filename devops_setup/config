@@ -4,7 +4,6 @@ export AWS_ACCESS_KEY_ID=AKIATETRFRPDKSP5G7FT
 export AWS_SECRET_ACCESS_KEY=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
 export AWS_DEFAULT_REGION=ap-east-1
 export EKS_CLUSTER=jack-cluster
-export AWS_ACCOUNT_ID=216059448262
 
 ## EFS file system id
 file_system_id=fs-b7225f7a
