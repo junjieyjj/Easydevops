@@ -6,8 +6,10 @@ SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
 
 # include lib
-source ${PROJECT_BASEDIR}/lib/utils/*
-source ${PROJECT_BASEDIR}/lib/k8s/*
+source ${PROJECT_BASEDIR}/lib/utils/logger.sh
+source ${PROJECT_BASEDIR}/lib/utils/utils.sh
+source ${PROJECT_BASEDIR}/lib/utils/verify.sh
+source ${PROJECT_BASEDIR}/lib/k8s/utils.sh
 
 # include config
 if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
