@@ -16,6 +16,29 @@ check_port_listen(){
   [ "$n" -eq ${retry_times} ] && { echo "ERROR: listen port ${port} failed"; exit 110; }
 }
 
+check_http(){
+  url=$1
+  timeout=${2-"2"}
+  retry_times=${3-"5"}
+  n=0
+  until [ "$n" -ge ${retry_times} ]
+  do
+    status_code=$(curl -L -m 5 -s -o /dev/null -w %{http_code} ${url})
+    [ ${status_code} -eq 200 ] && break || echo "url: ${url} return status code ${status_code}, retry ${n}"
+    n=$((n+1)) 
+    sleep ${timeout}
+  done
+  [ "$n" -eq ${retry_times} ] && { echo "ERROR: url return code not 200"; exit 110; }
+}
+
+check_ssh(){
+  user=$1
+  host=${2-"127.0.0.1"}
+  port=${3-"22"}
+  ssh -v -p ${port} ${user}@${host}
+  [ $? -eq 0 ] && { echo "ssh test by user: ${user}, host: ${host}, port: ${port} successful"; } || { echo "ERROR: ssh test by user: ${user}, host: ${host}, port: ${port} failed"; exit 110; }
+}
+
 check_command_exist(){
   command -v ${1} >/dev/null 2>&1 || { echo >&2 "ERROR: command ${1} not found, please install"; exit 110; }
 }
