@@ -44,22 +44,22 @@ check_awscli_command(){
 }
 
 check_aws_env(){
-  printenv | grep AWS_ACCESS_KEY_ID || { echo >&2 "ERROR: AWS_ACCESS_KEY_ID not set"; exit 110; }
-  printenv | grep AWS_SECRET_ACCESS_KEY || { echo >&2 "ERROR: AWS_SECRET_ACCESS_KEY not set"; exit 110; }
-  printenv | grep AWS_DEFAULT_REGION || { echo >&2 "ERROR: AWS_DEFAULT_REGION not set"; exit 110; }
+  printenv | grep AWS_ACCESS_KEY_ID > /dev/null || { echo >&2 "ERROR: AWS_ACCESS_KEY_ID not set"; exit 110; }
+  printenv | grep AWS_SECRET_ACCESS_KEY  > /dev/null || { echo >&2 "ERROR: AWS_SECRET_ACCESS_KEY not set"; exit 110; }
+  printenv | grep AWS_DEFAULT_REGION  > /dev/null || { echo >&2 "ERROR: AWS_DEFAULT_REGION not set"; exit 110; }
 }
 
 check_pv_status(){
   pv_name=$1
-  pv_status=$(kubectl get pv ${pv_name} | wc -l)
-  [ ${pv_status} == 1 ] && echo "${pv_name} pv 创建成功" || { echo "ERROR: ${pv_name} pv 创建失败"; exit 110; }
+  pv_status=$(kubectl get pv | grep ${pv_name} | wc -l)
+  [ ${pv_status} == 1 ] && echo "create ${pv_name} pv successful" || { echo "ERROR: create ${pv_name} pv failed"; exit 110; }
 }
 
 check_pvc_status(){
   namespace=$1
   pvc_name=$2
   pvc_status=$(kubectl -n ${namespace} get pvc ${pvc_name} | grep Bound | wc -l)
-  [ ${pvc_status} == 1 ] && echo "${pvc_name} pvc 创建成功" || { echo "ERROR: ${pv_name} pvc创建失败"; exit 110; }
+  [ ${pvc_status} == 1 ] && echo "create ${pvc_name} pvc successful" || { echo "ERROR: create ${pv_name} pvc failed"; exit 110; }
 }
 
 verify_params_null(){
