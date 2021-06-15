@@ -65,6 +65,7 @@ logger_debug "poc_group_id: ${poc_group_id}"
 
 # 创建poc project，替换id值为上面结果的id值
 logger_info "2. create poc project"
+logger_debug "call api command: curl -s --location --request POST \"http://127.0.0.1:8886/api/v4/projects?name=spring-boot-demo&namespace_id=${poc_group_id}\" --header \"Authorization: Bearer ************\""
 logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=spring-boot-demo&namespace_id=${poc_group_id}" \
 --header "Authorization: Bearer ${gitlab_api_token}")
 
@@ -73,6 +74,7 @@ logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/p
 logger_info "Create devops group and project"
 logger_info "======================================"
 logger_info "1. create devops group"
+logger_debug "call api command: curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' --header \"Authorization: Bearer *************\" --header 'Content-Type: application/json' --data '{\"path\": \"devops\",\"name\": \"devops\"}'"
 devops_group_id=$(curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
@@ -86,6 +88,7 @@ logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/p
 
 
 logger_info "3. create cicd project"
+logger_debug "call api command: curl -s --location --request POST \"http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}\" --header \"Authorization: Bearer ****************\""
 logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}" \
 --header "Authorization: Bearer ${gitlab_api_token}")
 
@@ -96,11 +99,13 @@ cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service ~/.ssh/
 chmod 400 ~/.ssh/service.pub ~/.ssh/service
 
 logger_info "1. add public key to service user"
+logger_debug "call api command: curl -s --location --request GET \"http://127.0.0.1:8886/api/v4/users?username=service\" --header \"Authorization: Bearer ****************\" "
 service_user_id=$(curl -s --location --request GET "http://127.0.0.1:8886/api/v4/users?username=service" \
 --header "Authorization: Bearer ${gitlab_api_token}" | ${PROJECT_BASEDIR}/tools/jq '.[].id')
 logger_debug "service_user_id: ${service_user_id}"
 
-logger_debug $(curl --location --request POST \
+logger_debug "call api command: curl -s --location --request POST --data-urlencode \"key=$ssh_public_key\" \"http://127.0.0.1:8886/api/v4/users/${service_user_id}/keys?title=gitlab-ssh-key\" --header \"Authorization: Bearer **************\" "
+logger_debug $(curl -s --location --request POST \
 --data-urlencode "key=$ssh_public_key" \
 "http://127.0.0.1:8886/api/v4/users/${service_user_id}/keys?title=gitlab-ssh-key" \
 --header "Authorization: Bearer ${gitlab_api_token}" )
@@ -114,7 +119,7 @@ UserKnownHostsFile /dev/null ' \
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/service
 
-check_ssh git 127.0.0.1 8887
+logger_debug $(check_ssh git 127.0.0.1 8887)
 
 rm -fr jenkins-shared-library
 git clone ssh://git@127.0.0.1:8887/devops/jenkins-shared-library.git 
