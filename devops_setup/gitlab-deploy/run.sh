@@ -4,6 +4,7 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
+LOG_DIR=${PROJECT_BASEDIR}/logs
 
 # include lib
 source ${PROJECT_BASEDIR}/lib/utils/logger.sh
@@ -41,11 +42,11 @@ verify_params_null \
   ${gitlab_redis_port}
 
 # create pv pvc
-echo_green "step1. create gitlab-pv、gitlab-pvc"
-[ $(kubectl get pv gitlab-pv 2>/dev/null | wc -l ) == 0 ] && { echo "create gitlab-pv"; create_efs_pv ${file_system_id} gitlab-pv gitlab; } || { echo "gitlab-pv is already existed, not create"; }
+logger_info "step1. create gitlab-pv、gitlab-pvc"
+[ $(kubectl get pv gitlab-pv 2>/dev/null | wc -l ) == 0 ] && { logger_info "create gitlab-pv"; create_efs_pv ${file_system_id} gitlab-pv gitlab; } || { logger_info "gitlab-pv is already existed, not create"; }
 check_pv_status gitlab-pv
 
-[ $(kubectl -n ${namespace} get pvc gitlab-pvc 2>/dev/null | wc -l ) == 0 ] && { echo "create gitlab-pvc"; create_efs_pvc ${file_system_id} ${namespace} gitlab-pvc gitlab-pv; } || { echo "namespace:${namespace} gitlab-pvc is already existed，not create"; }
+[ $(kubectl -n ${namespace} get pvc gitlab-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create gitlab-pvc"; create_efs_pvc ${file_system_id} ${namespace} gitlab-pvc gitlab-pv; } || { logger_info "namespace:${namespace} gitlab-pvc is already existed，not create"; }
 check_pvc_status ${namespace} gitlab-pvc
 
 # 渲染gitlab.yaml配置
@@ -94,9 +95,9 @@ persistence.mountInfo[2].subPath=data \
 -f gitlab.yaml
 
 # 检查jenkins statefulset启动状态
-echo_green "step3. check gitlab status"
+logger_info "step3. check gitlab status"
 kubectl -n ${namespace} rollout status statefulset gitlab --timeout 5m
 
-[ $? == 0 ] && { echo_green "gitlab deploy successful"; } || { echo_red "gitlab deploy failed"; }
+[ $? == 0 ] && { logger_info "gitlab deploy successful"; } || { logger_error "gitlab deploy failed"; }
 
 
