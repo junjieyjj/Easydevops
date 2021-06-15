@@ -55,29 +55,38 @@ logger_info "step3. Create init group and project"
 check_http http://127.0.0.1:8886
 logger_info "Create poc group and project"
 logger_info "======================================"
+logger_info "1. create poc group"
 poc_group_id=$(curl -s --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
 --data '{"path": "poc","name": "poc"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
+logger_debug "poc_group_id: ${poc_group_id}"
 
 # 创建poc project，替换id值为上面结果的id值
-curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=spring-boot-demo&namespace_id=${poc_group_id}" \
---header "Authorization: Bearer ${gitlab_api_token}"
+logger_info "2. create poc project"
+logger_debug $(curl -s --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=spring-boot-demo&namespace_id=${poc_group_id}" \
+--header "Authorization: Bearer ${gitlab_api_token}")
+
 
 # 创建devops group
 logger_info "Create devops group and project"
 logger_info "======================================"
+logger_info "1. create devops group"
 devops_group_id=$(curl --location --request POST 'http://127.0.0.1:8886/api/v4/groups/' \
 --header "Authorization: Bearer ${gitlab_api_token}" \
 --header 'Content-Type: application/json' \
 --data '{"path": "devops","name": "devops"}' | ${PROJECT_BASEDIR}/tools/jq '.id')
+logger_debug "devops_group_id: ${devops_group_id}"
 
 # 创建jenkins-shared-library和cicd project，替换id值为上面结果的id值
-curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=jenkins-shared-library&namespace_id=${devops_group_id}" \
---header "Authorization: Bearer ${gitlab_api_token}"
+logger_info "2. create jenkins-shared-library project"
+logger_debug $(curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=jenkins-shared-library&namespace_id=${devops_group_id}" \
+--header "Authorization: Bearer ${gitlab_api_token}")
 
-curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}" \
---header "Authorization: Bearer ${gitlab_api_token}"
+
+logger_info "3. create cicd project"
+logger_debug $(curl --location --request POST "http://127.0.0.1:8886/api/v4/projects?name=cicd&namespace_id=${devops_group_id}" \
+--header "Authorization: Bearer ${gitlab_api_token}")
 
 logger_info "step4. Add service user ssh public key"
 # 上传ssh key到service用户
@@ -85,13 +94,15 @@ cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service.pub ~/.ssh/
 cp -afr ${PROJECT_BASEDIR}/tools/ssh-key/service ~/.ssh/
 chmod 400 ~/.ssh/service.pub ~/.ssh/service
 
+logger_info "1. add public key to service user"
 service_user_id=$(curl -s --location --request GET "http://127.0.0.1:8886/api/v4/users?username=service" \
 --header "Authorization: Bearer ${gitlab_api_token}" | ${PROJECT_BASEDIR}/tools/jq '.[].id')
+logger_debug "service_user_id: ${service_user_id}"
 
-curl --location --request POST \
+logger_debug $(curl --location --request POST \
 --data-urlencode "key=$ssh_public_key" \
 "http://127.0.0.1:8886/api/v4/users/${service_user_id}/keys?title=gitlab-ssh-key" \
---header "Authorization: Bearer ${gitlab_api_token}" 
+--header "Authorization: Bearer ${gitlab_api_token}" )
 
 logger_info "step5. Git push code to init project"
 # 上传仓库
