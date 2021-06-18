@@ -10,6 +10,10 @@ source ${SCRIPT_BASEDIR}/lib/utils/logger.sh
 source ${SCRIPT_BASEDIR}/lib/utils/utils.sh
 source ${SCRIPT_BASEDIR}/lib/utils/verify.sh
 source ${SCRIPT_BASEDIR}/lib/k8s/utils.sh
+source ${SCRIPT_BASEDIR}/config
+
+# check aws config
+check_aws_env
 
 all_deploy() {
     # Create EFS persistent volume and persistent volume claim
