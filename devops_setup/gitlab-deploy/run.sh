@@ -46,7 +46,7 @@ logger_info "step1. create gitlab-pv、gitlab-pvc"
 [ $(kubectl get pv gitlab-pv 2>/dev/null | wc -l ) == 0 ] && { logger_info "create gitlab-pv"; create_efs_pv ${file_system_id} gitlab-pv gitlab; } || { logger_info "gitlab-pv is already existed, not create"; }
 check_pv_status gitlab-pv
 
-[ $(kubectl -n ${namespace} get pvc gitlab-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create gitlab-pvc"; create_efs_pvc ${file_system_id} ${namespace} gitlab-pvc gitlab-pv; } || { logger_info "namespace:${namespace} gitlab-pvc is already existed，not create"; }
+[ $(kubectl -n ${namespace} get pvc gitlab-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create gitlab-pvc"; create_efs_pvc ${namespace} gitlab-pvc gitlab-pv; } || { logger_info "namespace:${namespace} gitlab-pvc is already existed，not create"; }
 check_pvc_status ${namespace} gitlab-pvc
 
 # 渲染gitlab.yaml配置

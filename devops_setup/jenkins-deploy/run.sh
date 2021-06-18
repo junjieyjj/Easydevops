@@ -50,7 +50,7 @@ logger_info "step1. Create jenkins-pv、jenkins-pvc"
 [ $(kubectl get pv jenkins-pv 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-pv"; create_efs_pv ${file_system_id} jenkins-pv jenkins; } || { logger_info "jenkins-pv is already existed, not create"; }
 check_pv_status jenkins-pv
 
-[ $(kubectl -n ${namespace} get pvc jenkins-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-pvc"; create_efs_pvc ${file_system_id} ${namespace} jenkins-pvc jenkins-pv; } || { logger_info "namespace:${namespace} jenkins-pvc is already existed，not create"; }
+[ $(kubectl -n ${namespace} get pvc jenkins-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-pvc"; create_efs_pvc ${namespace} jenkins-pvc jenkins-pv; } || { logger_info "namespace:${namespace} jenkins-pvc is already existed，not create"; }
 check_pvc_status ${namespace} jenkins-pvc
 
 # create jenkins slave pv pvc
@@ -58,7 +58,7 @@ logger_info "step2. Create jenkins-slave-pv、jenkins-slave-pvc"
 [ $(kubectl get pv jenkins-slave-pv 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-pv"; create_efs_pv ${file_system_id} jenkins-slave-pv jenkins-slave; } || { logger_info "jenkins-slave-pv is already existed, not create"; }
 check_pv_status jenkins-slave-pv
 
-[ $(kubectl -n ${jenkins_slave_namespace} get pvc jenkins-slave-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-pvc"; create_efs_pvc ${file_system_id} ${jenkins_slave_namespace} jenkins-slave-pvc jenkins-slave-pv; } || { logger_info "namespace:${jenkins_slave_namespace} jenkins-slave-pvc is already existed，not create"; }
+[ $(kubectl -n ${jenkins_slave_namespace} get pvc jenkins-slave-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-pvc"; create_efs_pvc ${jenkins_slave_namespace} jenkins-slave-pvc jenkins-slave-pv; } || { logger_info "namespace:${jenkins_slave_namespace} jenkins-slave-pvc is already existed，not create"; }
 check_pvc_status ${jenkins_slave_namespace} jenkins-slave-pvc
 
 echo_green "step3. Create jenkins-slave-role、jenkins-slave-rolebinding"

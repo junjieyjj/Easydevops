@@ -105,3 +105,31 @@ create_cluster_rolebinding(){
       namespace: ${namespace}
   """ | kubectl create -f -
 }
+
+create_pod(){
+  namespace=$1
+  name=$2
+  image=$3
+  mount_path=$4
+  pvc_name=$5
+  echo """
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: ${name}
+    namespace: ${namespace}
+  spec:
+    containers:
+    - name: app
+      image: ${image}
+      command: ['/bin/sh']
+      args: ['-c', 'sleep 1000000000']
+      volumeMounts:
+      - name: persistent-storage
+        mountPath: /data
+    volumes:
+    - name: persistent-storage
+      persistentVolumeClaim:
+        claimName: busybox-pvc
+    """ | kubectl apply -f -
+}

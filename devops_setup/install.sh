@@ -18,7 +18,8 @@ check_aws_env
 all_deploy() {
     # Create EFS persistent volume and persistent volume claim
     logger_info "Stage0. create EFS persistent volume and persistent volume claim"
-    sh infra/run.sh
+    sh infra/create_init_pod.sh
+    sh infra/create_shared_volume_dir.sh
     revalue=$?
     if [[ "${revalue}" == 110 ]]
     then
@@ -73,6 +74,9 @@ all_deploy() {
     fi
     logger_info "Stage3 done.."
     echo
+
+    logger_info "Stage4 delete busybox pod"
+    sh infra/delete_init_pod.sh
 }
 
 deploy_ingress(){
@@ -110,6 +114,7 @@ list_resources(){
 }
 
 delete_resources(){
+    sh infra/create_init_pod.sh
     echo -e "\033[1;36m1. Delete helm Release:\033[0m"
     resources_count=$(helm -n ${namespace} list | grep -E 'gitlab|sonarqube|jenkins' | wc -l)
     if [ ${resources_count} -gt 0 ];then
@@ -122,7 +127,7 @@ delete_resources(){
     fi
     echo
     echo -e "\033[1;36m2. delete shared Volume /jenkins /sonarqube /gitlab /jenkins-slave\033[0m"
-    kubectl -n ${namespace} exec -it busybox sh -- rm -fr /data/jenkins /data/sonarqube /data/gitlab 
+    kubectl -n ${namespace} exec -it busybox sh -- rm -fr /data/jenkins /data/sonarqube /data/gitlab /data/jenkins-slave
     echo
     echo -e "\033[1;36m3. delete all tables in gitlab postgresql database ${gitlab_postgresql_db_database}\033[0m"
     echo "delete gitlab postgresql"
@@ -153,6 +158,7 @@ delete_resources(){
     fi
 
     echo
+    sh infra/delete_init_pod.sh
 }
 
 echo 'Easy DevOps

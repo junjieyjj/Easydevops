@@ -23,11 +23,34 @@ create_efs_pv(){
   """ | kubectl apply -f -
 }
 
-create_efs_pvc(){
+create_efs_pv_without_subpath(){
     file_system_id=$1
-    namespace=$2
-    pvc_name=$3
-    bind_pv_name=$4
+    pv_name=$2
+  echo """
+  apiVersion: v1
+  kind: PersistentVolume
+  metadata:
+    name: ${pv_name}
+    labels:
+      pv: ${pv_name}
+  spec:
+    capacity:
+      storage: 5Ti
+    volumeMode: Filesystem
+    accessModes:
+      - ReadWriteMany
+    storageClassName: ""
+    persistentVolumeReclaimPolicy: Retain
+    csi:
+      driver: efs.csi.aws.com
+      volumeHandle: ${file_system_id}
+  """ | kubectl apply -f -
+}
+
+create_efs_pvc(){
+    namespace=$1
+    pvc_name=$2
+    bind_pv_name=$3
   echo """
   apiVersion: v1
   kind: PersistentVolumeClaim

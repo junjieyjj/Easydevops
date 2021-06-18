@@ -46,7 +46,7 @@ logger_info "step1. Create sonarqube-pv、sonarqube-pvc"
 [ $(kubectl get pv sonarqube-pv 2>/dev/null | wc -l ) == 0 ] && { logger_info "create sonarqube-pv"; create_efs_pv ${file_system_id} sonarqube-pv sonarqube; } || { logger_info "sonarqube-pv is already existed, not create"; }
 check_pv_status sonarqube-pv
 
-[ $(kubectl -n ${namespace} get pvc sonarqube-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create sonarqube-pvc"; create_efs_pvc ${file_system_id} ${namespace} sonarqube-pvc sonarqube-pv; } || { logger_info "namespace:${namespace} sonarqube-pvc is already existed，not create"; }
+[ $(kubectl -n ${namespace} get pvc sonarqube-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create sonarqube-pvc"; create_efs_pvc ${namespace} sonarqube-pvc sonarqube-pv; } || { logger_info "namespace:${namespace} sonarqube-pvc is already existed，not create"; }
 check_pvc_status ${namespace} sonarqube-pvc
 
 # 使用helm搭建Jenkins
