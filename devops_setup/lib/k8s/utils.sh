@@ -1,3 +1,10 @@
+CURDIR=$(cd $(dirname ${BASH_SOURCE[0]}); pwd )
+PROJECT_BASE_DIR=$(dirname ${CURDIR})
+
+source ${CURDIR}/efs_storage.sh
+source ${CURDIR}/ebs_storage.sh
+source ${CURDIR}/flexvolume_storage.sh
+
 create_namespace(){
     namespace=$1
     kubectl create ns ${namespace}
@@ -45,52 +52,56 @@ create_pvc(){
     esac
 }
 
-
-create_efs_pv(){
-    file_system_id=$1
-    pv_name=$2
-    sub_path=$3
+create_cluster_role(){
+    name=$1
   echo """
-  apiVersion: v1
-  kind: PersistentVolume
+  kind: ClusterRole
+  apiVersion: rbac.authorization.k8s.io/v1beta1
   metadata:
-    name: ${pv_name}
-    labels:
-      pv: ${pv_name}
-  spec:
-    capacity:
-      storage: 5Ti
-    volumeMode: Filesystem
-    accessModes:
-      - ReadWriteMany
-    storageClassName: ""
-    persistentVolumeReclaimPolicy: Retain
-    csi:
-      driver: efs.csi.aws.com
-      volumeHandle: ${file_system_id}:/${sub_path}
+    name: ${name}
+  rules:
+    - apiGroups: ['extensions', 'apps']
+      resources: ['deployments']
+      verbs: ['create', 'delete', 'get', 'list', 'watch', 'patch', 'update']
+    - apiGroups: ['']
+      resources: ['services']
+      verbs: ['create', 'delete', 'get', 'list', 'watch', 'patch', 'update']
+    - apiGroups: ['']
+      resources: ['pods']
+      verbs: ['create','delete','get','list','patch','update','watch']
+    - apiGroups: ['']
+      resources: ['pods/exec']
+      verbs: ['create','delete','get','list','patch','update','watch']
+    - apiGroups: ['']
+      resources: ['pods/log']
+      verbs: ['get','list','watch']
+    - apiGroups: ['']
+      resources: ['secrets']
+      verbs: ['get']
+    - apiGroups: ['']
+      resources: ['events']
+      verbs: ['get','list','watch']
   """ | kubectl apply -f -
 }
 
-create_efs_pvc(){
-    file_system_id=$1
-    namespace=$2
-    pvc_name=$3
-    bind_pv_name=$4
+create_cluster_rolebinding(){
+    name=$1
+    binding_cluster_role=$2
+    service_account_name=$3
+    namespace=$4
   echo """
-  apiVersion: v1
-  kind: PersistentVolumeClaim
+  apiVersion: rbac.authorization.k8s.io/v1beta1
+  kind: ClusterRoleBinding
   metadata:
-    name: ${pvc_name}
+    name: ${name}
     namespace: ${namespace}
-  spec:
-    accessModes:
-      - ReadWriteMany
-    storageClassName: ''
-    resources:
-      requests:
-        storage: 5Ti
-    selector:
-      matchLabels:
-        pv: ${bind_pv_name}
-  """ | kubectl apply -f -
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: ${binding_cluster_role}
+  subjects:
+    - kind: ServiceAccount
+      name: ${service_account_name}
+      namespace: ${namespace}
+  """ | kubectl create -f -
 }

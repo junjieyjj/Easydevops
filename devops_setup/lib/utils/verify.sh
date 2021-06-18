@@ -121,3 +121,24 @@ check_k8s_pod_status(){
   done
   [ "$n" -eq ${retry_times} ] && { echo "ERROR: pod ${pod} start failed"; exit 110; }
 }
+
+check_cluster_role(){
+  namespace=$1
+  cluster_role=$2
+  cluster_role_exist=$(kubectl -n ${namespace} get clusterrole | grep ${cluster_role} | wc -l)
+  [ ${cluster_role_exist} == 1 ] && echo "create ${cluster_role} clusterrole successful" || { echo "ERROR: create ${cluster_role} clusterrole failed"; exit 110; }
+}
+
+check_cluster_rolebinding(){
+  namespace=$1
+  cluster_role_binding=$2
+  cluster_role_binding_exist=$(kubectl -n ${namespace} get clusterrolebindings | grep ${cluster_role_binding} | wc -l)
+  [ ${cluster_role_binding_exist} == 1 ] && echo "create ${cluster_role_binding} clusterrolebinding successful" || { echo "ERROR: create ${cluster_role_binding} clusterrole failed"; exit 110; }
+}
+
+check_ingress(){
+  namespace=$1
+  name=$2
+  ingress_exist=$(kubectl -n ${namespace} get ingress | grep ${name} | wc -l)
+  [ ${ingress_exist} == 1 ] && echo "create ${name} ingress successful" || { echo "ERROR: create ${name} ingress failed"; exit 110; }
+}

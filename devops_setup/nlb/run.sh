@@ -4,9 +4,13 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
+LOG_DIR=${PROJECT_BASEDIR}/logs
 
-# include lib/*
-source ${PROJECT_BASEDIR}/lib/*
+# include lib
+source ${PROJECT_BASEDIR}/lib/utils/logger.sh
+source ${PROJECT_BASEDIR}/lib/utils/utils.sh
+source ${PROJECT_BASEDIR}/lib/utils/verify.sh
+source ${PROJECT_BASEDIR}/lib/k8s/utils.sh
 
 # include config
 if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
@@ -16,8 +20,15 @@ else
   [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
 
+# check aws config
+check_aws_env
+
+# check config params
+verify_params_null \
+  ${cluster_name} 
+
 # deploy alb controller
-echo_green "step1. Deploy alb controller"
+logger_info "step1. Deploy alb controller"
 
 sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
 
@@ -26,7 +37,7 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 kubectl apply -f v2_1_0_full.yaml
 
 echo
-echo_green "step2. Deploy ingress nginx controller"
+logger_info "step2. Deploy ingress nginx controller"
 echo """
 apiVersion: v1
 data:
@@ -40,7 +51,7 @@ metadata:
 kubectl apply -f ingress-nginx.yaml
 
 echo
-echo_green "step3. Deploy devops ingress resources"
+logger_info "step3. Deploy devops ingress resources"
 echo """
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -75,7 +86,7 @@ spec:
 """ | kubectl apply -f -
 
 echo
-echo_green "step4. Renew coredns configmap and restart pod"
+logger_info "step4. Renew coredns configmap and restart pod"
 echo """
 apiVersion: v1
 data:

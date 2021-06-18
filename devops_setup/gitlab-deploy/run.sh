@@ -60,7 +60,7 @@ sed -e "s|GITLAB_EXTERNAL_URL|${gitlab_external_url}|" \
     -e "s/GITLAB_REDIS_PORT/${gitlab_redis_port}/" gitlab.yaml.template \
     > gitlab.yaml
 
-# 使用helm搭建Jenkins
+# 使用helm搭建Gitlab
 logger_info "step2. helm deploy Gitlab"
 helm upgrade gitlab ./gitlab-ce \
 --namespace ${namespace}  \
