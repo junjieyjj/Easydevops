@@ -18,7 +18,7 @@ check_aws_env
 all_deploy() {
     # Create EFS persistent volume and persistent volume claim
     logger_info "Stage0. create EFS persistent volume and persistent volume claim"
-    sh infra/create_init_pod.sh
+    create_init_pod
     sh infra/create_shared_volume_dir.sh
     revalue=$?
     if [[ "${revalue}" == 110 ]]
@@ -79,6 +79,15 @@ all_deploy() {
     sh infra/delete_init_pod.sh
 }
 
+create_init_pod(){
+    sh infra/create_init_pod.sh
+    revalue=$?
+    if [[ "${revalue}" == 110 ]]
+    then
+        exit 1
+    fi
+}
+
 deploy_ingress(){
     # Deploy ingress
     logger_info "Deploy ingress componment"
@@ -114,7 +123,7 @@ list_resources(){
 }
 
 delete_resources(){
-    sh infra/create_init_pod.sh
+    create_init_pod
     echo -e "\033[1;36m1. Delete helm Release:\033[0m"
     resources_count=$(helm -n ${namespace} list | grep -E 'gitlab|sonarqube|jenkins' | wc -l)
     if [ ${resources_count} -gt 0 ];then
