@@ -46,5 +46,5 @@ check_pvc_status ${namespace} busybox-pvc
 
 # create busybox
 logger_info "step4. Create busybox pod"
-crate_pod ${namespace} busybox ${busybox_image} /data busybox-pvc
+create_pod ${namespace} busybox ${busybox_image} /data busybox-pvc
 check_k8s_pod_status ${namespace} busybox
