@@ -3,13 +3,13 @@ SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
-LOG_DIR=${PROJECT_BASEDIR}/logs
+LOG_DIR=${SCRIPT_BASEDIR}/logs
 
 # include lib
-source ${PROJECT_BASEDIR}/lib/utils/logger.sh
-source ${PROJECT_BASEDIR}/lib/utils/utils.sh
-source ${PROJECT_BASEDIR}/lib/utils/verify.sh
-source ${PROJECT_BASEDIR}/lib/k8s/utils.sh
+source ${SCRIPT_BASEDIR}/lib/utils/logger.sh
+source ${SCRIPT_BASEDIR}/lib/utils/utils.sh
+source ${SCRIPT_BASEDIR}/lib/utils/verify.sh
+source ${SCRIPT_BASEDIR}/lib/k8s/utils.sh
 
 all_deploy() {
     # Create EFS persistent volume and persistent volume claim
