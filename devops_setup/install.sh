@@ -105,7 +105,7 @@ list_resources(){
 }
 
 delete_resources(){
-
+    echo ''
 }
 
 echo 'Easy DevOps
