@@ -130,16 +130,6 @@ delete_resources(){
     echo "delete sonarqube postgresql"
     echo
     echo -e "\033[1;36m5. delete PV, PVC resources\033[0m"
-    pv_count=$(kubectl -n ${namespace} get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | wc -l)
-    if [ ${pv_count} -gt 0 ];then
-        kubectl -n ${namespace} get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | awk '{print $1}' | while read line
-        do
-            kubectl delete pv $line
-        done
-    else
-        echo 'no pv'
-    fi
-
     pvc_count=$(kubectl -n ${namespace} get pvc | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | wc -l)
     if [ ${pvc_count} -gt 0 ];then
         kubectl -n ${namespace} get pvc | grep -E 'gitlab-pvc|jenkins-pvc|sonarqube-pvc|jenkins-slave-pvc' | awk '{print $1}' | while read line
@@ -150,6 +140,16 @@ delete_resources(){
         echo 'no pvc'
     fi
     
+    pv_count=$(kubectl -n ${namespace} get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | wc -l)
+    if [ ${pv_count} -gt 0 ];then
+        kubectl -n ${namespace} get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | awk '{print $1}' | while read line
+        do
+            kubectl delete pv $line
+        done
+    else
+        echo 'no pv'
+    fi
+
     echo
 }
 
