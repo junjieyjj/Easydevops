@@ -163,7 +163,7 @@ echo 'Easy DevOps
 6. Delete all resources
 ------------------------------------------------------------------
 '
-read -p "please give me your choice: " choice
+read -p "please input your choice: " choice
 
 case "${choice}" in
     "1")
@@ -186,10 +186,10 @@ case "${choice}" in
         list_resources
         echo -n -e "\033[31m\033[05mConfirm [Y/N] \033[0m"
         read delete_confirm_first
-        [ "Y" == ${delete_confirm_first} ] || { exit 110; }
+        [ $(echo ${delete_confirm_first} | grep -Ew 'y|Y' | wc -l) -gt 0 ] || { exit 110; }
         echo -n -e "\033[31m\033[05mThis operation will delete all resources, including database tables, persistent volume data, please be sure to confirm again [Y/N] \033[0m"
         read delete_confirm_second
-        [ "Y" == ${delete_confirm_second} ] && { delete_resources; } || { exit 110; }
+        [ $(echo ${delete_confirm_second} | grep -Ew 'y|Y' | wc -l) -gt 0 ] && { delete_resources; } || { exit 110; }
         ;;
     *)
         echo "unknow choice" 
