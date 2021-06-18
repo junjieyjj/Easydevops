@@ -103,7 +103,8 @@ list_resources(){
     kubectl get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv'
     echo
     echo 'NAME            STATUS   VOLUME         CAPACITY   ACCESS MODES   STORAGECLASS   AGE'
-    kubectl -n ${namespace} get pvc | grep -E 'gitlab-pvc|jenkins-pvc|sonarqube-pvc|jenkins-slave-pvc'
+    kubectl -n ${namespace} get pvc | grep -E 'gitlab-pvc|jenkins-pvc|sonarqube-pvc'
+    kubectl -n ${jenkins_slave_namespace} get pvc | grep -E 'jenkins-slave-pv'
     echo
     
 }
