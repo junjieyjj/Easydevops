@@ -25,11 +25,11 @@ curl_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/curl:latest
 namespace=devops
 
 # sonarqube连接postgresql参数
-sonarqube_postgresql_db_host=sonarqube.cluster-cof70yepyr2j.ap-east-1.rds.amazonaws.com
-sonarqube_postgresql_db_database=sonar3
-sonarqube_postgresql_db_username=postgres
+sonarqube_postgresql_db_host=sonarqube-postgres.devops.svc.cluster.local
+sonarqube_postgresql_db_database=sonar
+sonarqube_postgresql_db_username=sonar
 sonarqube_postgresql_db_password=admin1234
-sonarqube_postgresql_db_port=5431
+sonarqube_postgresql_db_port=5432
 
 # sonarqube的资源限制
 requests_cpu=501m
