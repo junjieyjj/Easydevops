@@ -5,12 +5,12 @@ LOG_LANG_ALL="zh en fr"
 LOG_MSG_TEMPLATE_AFFIX="diag-msg_" 
 LOG_OUTPUT_FILE_DEFAULT="./diag.log"
 ## Define variables 
-#LOG_DEBUG_LEVEL=0
-#LOG_OUTPUT_FILE=$LOG_OUTPUT_FILE_DEFAULT 
-#LOG_OUTPUT_CONSOLE=true
-#LOG_LANG=en
+LOG_DEBUG_LEVEL=0
+LOG_OUTPUT_FILE=$LOG_OUTPUT_FILE_DEFAULT 
+LOG_OUTPUT_CONSOLE=true
+LOG_LANG=en
 LOG_MSG_TEMPLATE="diag-msg_${LOG_LANG}.tmpl" 
-#TZ="Asia/Shanghai"
+TZ="Asia/Shanghai"
 
 logger_set_timezone()
 { 
