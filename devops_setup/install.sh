@@ -155,7 +155,7 @@ delete_resources(){
         echo 'no pvc'
     fi
     [ $(kubectl -n ${jenkins_slave_namespace} get pvc | grep -E 'jenkins-slave-pv' | wc -l) -gt 0 ] && { kubectl -n ${jenkins_slave_namespace} delete pvc jenkins-slave-pvc ; } || { echo no jenkins-slave-pvc; }
- ve-pv' | wc -l)
+    pv_count=$(kubectl -n ${namespace} get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | wc -l)
     if [ ${pv_count} -gt 0 ];then
         kubectl -n ${namespace} get pv | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv|jenkins-slave-pv' | awk '{print $1}' | while read line
         do
