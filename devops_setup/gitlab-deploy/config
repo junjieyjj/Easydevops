@@ -29,7 +29,7 @@ limits_mem=4096Mi
 # gitlab连接postgresql参数
 gitlab_postgresql_db_host=gitlab-postgres.devops.svc.cluster.local
 gitlab_postgresql_db_database=gitlab
-gitlab_postgresql_db_username=gitlab
+gitlab_postgresql_db_username=postgres
 gitlab_postgresql_db_password=admin1234
 gitlab_postgresql_db_port=5432
 
