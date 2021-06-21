@@ -7,11 +7,11 @@ LOG_DIR=${SCRIPT_BASEDIR}/logs
 LOG_OUTPUT_FILE=${LOG_DIR}/diag.log
 
 # include lib
+source ${SCRIPT_BASEDIR}/config
 source ${SCRIPT_BASEDIR}/lib/utils/logger.sh
 source ${SCRIPT_BASEDIR}/lib/utils/utils.sh
 source ${SCRIPT_BASEDIR}/lib/utils/verify.sh
 source ${SCRIPT_BASEDIR}/lib/k8s/utils.sh
-source ${SCRIPT_BASEDIR}/config
 
 # check aws config
 check_aws_env
