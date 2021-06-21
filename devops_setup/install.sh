@@ -140,10 +140,19 @@ delete_resources(){
     kubectl -n ${namespace} exec -it busybox sh -- rm -fr /data/jenkins /data/sonarqube /data/gitlab /data/jenkins-slave
     echo
     echo -e "\033[1;36m3. delete all tables in gitlab postgresql database ${gitlab_postgresql_db_database}\033[0m"
-    echo "delete gitlab postgresql"
+    kubectl -n ${namespace} exec -it busybox -- psql -h ${gitlab_postgresql_db_host} -p ${gitlab_postgresql_db_port} -U ${gitlab_postgresql_db_username} -d ${gitlab_postgresql_db_database} <<EOF
+${gitlab_postgresql_db_password}
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+EOF
+
     echo
     echo -e "\033[1;36m4. delete all tables in sonarqube postgresql database ${sonarqube_postgresql_db_database}\033[0m"
-    echo "delete sonarqube postgresql"
+    kubectl -n ${namespace} exec -it busybox -- psql -h ${sonarqube_postgresql_db_host} -p ${sonarqube_postgresql_db_port} -U ${sonarqube_postgresql_db_username} -d ${sonarqube_postgresql_db_database} <<EOF
+${sonarqube_postgresql_db_password}
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+EOF
     echo
     echo -e "\033[1;36m5. delete PV, PVC resources\033[0m"
     pvc_count=$(kubectl -n ${namespace} get pvc | grep -E 'gitlab-pv|jenkins-pv|sonarqube-pv' | wc -l)
