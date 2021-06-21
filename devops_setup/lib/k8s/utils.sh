@@ -7,7 +7,7 @@ source ${CURDIR}/flexvolume_storage.sh
 
 create_namespace(){
     namespace=$1
-    kubectl create ns ${namespace}
+    kubectl create ns ${namespace} || echo '[INFO] namespace already exists, not create again'
 }
 
 create_pv(){

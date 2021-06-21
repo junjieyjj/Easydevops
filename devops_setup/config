@@ -1,3 +1,10 @@
+# LOGS CONFIG
+# ------------------------------------------------------
+LOG_DEBUG_LEVEL=0
+LOG_OUTPUT_FILE=logs/diag.log
+LOG_OUTPUT_CONSOLE=true
+TZ="Asia/Shanghai"
+
 # AWS CONFIG
 # ------------------------------------------------------
 export AWS_ACCESS_KEY_ID=AKIATETRFRPDKSP5G7FT

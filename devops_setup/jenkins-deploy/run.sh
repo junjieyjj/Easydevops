@@ -61,7 +61,7 @@ check_pv_status jenkins-slave-pv
 [ $(kubectl -n ${jenkins_slave_namespace} get pvc jenkins-slave-pvc 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-pvc"; create_efs_pvc ${jenkins_slave_namespace} jenkins-slave-pvc jenkins-slave-pv; } || { logger_info "namespace:${jenkins_slave_namespace} jenkins-slave-pvc is already existed，not create"; }
 check_pvc_status ${jenkins_slave_namespace} jenkins-slave-pvc
 
-echo_green "step3. Create jenkins-slave-role、jenkins-slave-rolebinding"
+logger_info "step3. Create jenkins-slave-role、jenkins-slave-rolebinding"
 [ $(kubectl -n ${jenkins_slave_namespace} get clusterrole jenkins-slave-role 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-role"; create_cluster_role jenkins-slave-role; } || { logger_info "namespace: ${jenkins_slave_namespace} jenkins-slave-role is already existed，not create"; }
 check_cluster_role jenkins-slave-role
 

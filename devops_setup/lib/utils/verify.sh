@@ -123,9 +123,8 @@ check_k8s_pod_status(){
 }
 
 check_cluster_role(){
-  namespace=$1
-  cluster_role=$2
-  cluster_role_exist=$(kubectl -n ${namespace} get clusterrole | grep ${cluster_role} | wc -l)
+  cluster_role=$1
+  cluster_role_exist=$(kubectl get clusterrole | grep ${cluster_role} | wc -l)
   [ ${cluster_role_exist} == 1 ] && echo "create ${cluster_role} clusterrole successful" || { echo "ERROR: create ${cluster_role} clusterrole failed"; exit 110; }
 }
 
