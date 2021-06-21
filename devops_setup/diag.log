@@ -1,6 +1,0 @@
-2021-06-16 15:10:44.d [56436] - DEBUG This is DEBUG level.
-2021-06-16 15:10:44.d [56436] - INFO This is INFO level.
-2021-06-16 15:10:44.d [56436] - WARN This is WARN level.
-2021-06-16 15:10:44.d [56436] - ALERT This is ALERT level.
-2021-06-16 15:10:44.d [56436] - FATAL This is FATAL level.
-2021-06-16 15:10:44.d [56436] - FATAL 
