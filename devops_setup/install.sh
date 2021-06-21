@@ -4,6 +4,7 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 LOG_DIR=${SCRIPT_BASEDIR}/logs
+LOG_OUTPUT_FILE=${LOG_DIR}/diag.log
 
 # include lib
 source ${SCRIPT_BASEDIR}/lib/utils/logger.sh

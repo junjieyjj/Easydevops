@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+echo_green "Start Confing Sonarqube"
+echo_green "#######################################################"
+
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -49,3 +52,6 @@ logger_debug "call api command: curl -u admin:************* -X POST -d \"name=je
 logger_debug $(curl -s -u admin:${sonarqube_admin_password} -X POST -d "name=jenkins&url=http://${jenkins_fqdn}/sonarqube-webhook/" "http://127.0.0.1:8885/api/webhooks/create")
 
 netstat -tnlup | grep 8885 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
+
+echo_green "#######################################################"
+echo_green "Config Sonarqube Done..."

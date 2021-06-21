@@ -6,14 +6,14 @@ source ${CURDIR}/ebs_storage.sh
 source ${CURDIR}/flexvolume_storage.sh
 
 create_namespace(){
-    namespace=$1
+    local namespace=$1
     kubectl create ns ${namespace} || echo '[INFO] namespace already exists, not create again'
 }
 
 create_pv(){
     # AWS: efs、ebs
     # Aliyun: flexvolume
-    storage_type=$1
+    local storage_type=$1
     case "${storage_type}" in
     "efs")
         create_efs_pv
@@ -34,7 +34,7 @@ create_pv(){
 create_pvc(){
     # AWS: efs、ebs
     # Aliyun: flexvolume
-    storage_type=$1
+    local storage_type=$1
     case "${storage_type}" in
     "efs")
         create_efs_pvc
@@ -53,7 +53,7 @@ create_pvc(){
 }
 
 create_cluster_role(){
-    name=$1
+    local name=$1
   echo """
   kind: ClusterRole
   apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -85,10 +85,10 @@ create_cluster_role(){
 }
 
 create_cluster_rolebinding(){
-    name=$1
-    binding_cluster_role=$2
-    service_account_name=$3
-    namespace=$4
+    local name=$1
+    local binding_cluster_role=$2
+    local service_account_name=$3
+    local namespace=$4
   echo """
   apiVersion: rbac.authorization.k8s.io/v1beta1
   kind: ClusterRoleBinding
@@ -107,11 +107,11 @@ create_cluster_rolebinding(){
 }
 
 create_pod(){
-  namespace=$1
-  name=$2
-  image=$3
-  mount_path=$4
-  pvc_name=$5
+  local namespace=$1
+  local name=$2
+  local image=$3
+  local mount_path=$4
+  local pvc_name=$5
   echo """
   apiVersion: v1
   kind: Pod

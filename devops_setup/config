@@ -1,7 +1,6 @@
 # LOGS CONFIG
 # ------------------------------------------------------
 LOG_DEBUG_LEVEL=0
-LOG_OUTPUT_FILE=logs/diag.log
 LOG_OUTPUT_CONSOLE=true
 TZ="Asia/Shanghai"
 

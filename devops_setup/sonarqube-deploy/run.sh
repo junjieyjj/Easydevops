@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+echo_green "Start Deploy Sonarqube"
+echo_green "#######################################################"
+
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -123,3 +126,5 @@ kubectl -n ${namespace} rollout status deployment sonarqube-sonarqube --timeout 
 
 [ $? == 0 ] && { logger_info "sonarqube deploy successful"; } || { logger_error "sonarqube deploy failed"; }
 
+echo_green "#######################################################"
+echo_green "Config Sonarqube Done..."

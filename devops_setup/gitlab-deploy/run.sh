@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+echo_green "Start Deploy Gitlab"
+echo_green "#######################################################"
+
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -125,10 +128,11 @@ persistence.mountInfo[2].subPath=data \
 
 rm -f gitlab.yaml
 
-# 检查jenkins statefulset启动状态
+# 检查gitlab statefulset启动状态
 logger_info "step3. check gitlab status"
 kubectl -n ${namespace} rollout status statefulset gitlab --timeout 5m
 
 [ $? == 0 ] && { logger_info "gitlab deploy successful"; } || { logger_error "gitlab deploy failed"; exit 110; }
 
-
+echo_green "#######################################################"
+echo_green "Deploy Gitlab Done..."

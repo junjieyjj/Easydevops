@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+echo_green "Start Config NLB Ingress"
+echo_green "#######################################################"
+
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -118,3 +121,6 @@ metadata:
 """ | kubectl apply -f -
 
 kubectl -n kube-system get pod | grep coredns | awk '{print $1}' | while read line; do kubectl -n kube-system delete pod $line ; done 
+
+echo_green "#######################################################"
+echo_green "Config NLB Ingress Done..."

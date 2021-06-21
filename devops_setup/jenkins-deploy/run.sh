@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+echo_green "Start Deploy Jenkins"
+echo_green "#######################################################"
+
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -62,7 +65,7 @@ check_pv_status jenkins-slave-pv
 check_pvc_status ${jenkins_slave_namespace} jenkins-slave-pvc
 
 logger_info "step3. Create jenkins-slave-role、jenkins-slave-rolebinding"
-[ $(kubectl -n ${jenkins_slave_namespace} get clusterrole jenkins-slave-role 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-role"; create_cluster_role jenkins-slave-role; } || { logger_info "namespace: ${jenkins_slave_namespace} jenkins-slave-role is already existed，not create"; }
+[ $(kubectl -n ${jenkins_slave_namespace} get clusterrole jenkins-slave-role 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-role"; create_cluster_role jenkins-slave-role; } || { logger_info "jenkins-slave-role is already existed，not create"; }
 check_cluster_role jenkins-slave-role
 
 [ $(kubectl -n ${jenkins_slave_namespace} get clusterrolebindings jenkins-slave-rolebinding 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-rolebinding"; create_cluster_rolebinding jenkins-slave-rolebinding jenkins-slave-role jenkins ${namespace}; } || { logger_info "namespace: ${namespace} jenkins-slave-rolebinding is already existed，not create"; }
@@ -149,8 +152,10 @@ helm upgrade jenkins ./jenkins \
 -f ./jcasc.yaml 
 
 # 检查jenkins statefulset启动状态
-echo_green "step6. Check jenkins status"
+logger_info "step6. Check jenkins status"
 kubectl -n ${namespace} rollout status statefulset jenkins --timeout 10m
 
 [ $? == 0 ] && { logger_info "deploy jenkins successful"; } || { logger_error "deploy jenkins failed"; }
 
+echo_green "#######################################################"
+echo_green "Deploy Jenkins Done..."

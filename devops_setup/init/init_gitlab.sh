@@ -1,4 +1,7 @@
 #!/usr/bin/bash
+echo_green "Start Config Gitlab"
+echo_green "#######################################################"
+
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -156,3 +159,5 @@ rm -fr spring-boot-demo
 netstat -tnlup | grep 8886 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 netstat -tnlup | grep 8887 | awk '{print $NF}' | awk -F'/' '{print $1}' | xargs kill -9
 
+echo_green "#######################################################"
+echo_green "Confing Gitlab Done..."
