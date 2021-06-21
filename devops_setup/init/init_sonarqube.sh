@@ -1,7 +1,4 @@
 #!/usr/bin/bash
-echo_green "Start Confing Sonarqube"
-echo_green "#######################################################"
-
 SCRIPT_BASEDIR=$(dirname "$0")
 
 cd ${SCRIPT_BASEDIR}
@@ -23,6 +20,9 @@ if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
 else
   [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
+
+echo_green "Start Confing Sonarqube"
+echo_green "#######################################################"
 
 logger_info "step1. Setup sonarqube 9000 port forward to 0.0.0.0 8885"
 # 配置gitlab端口转发
