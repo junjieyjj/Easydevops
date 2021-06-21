@@ -35,5 +35,5 @@ gitlab_postgresql_db_port=5432
 
 # gitlab连接redis参数
 # 注意：aws postgresql不能使用集群模式，也不需设置密码
-gitlab_redis_host=gitlab-redis..devops.svc.cluster.local
+gitlab_redis_host=gitlab-redis.devops.svc.cluster.local
 gitlab_redis_port=6379
