@@ -33,11 +33,11 @@ verify_params_null \
 # deploy alb controller
 logger_info "step1. Deploy alb controller"
 
-sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
+#sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
 
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
+#kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
 
-kubectl apply -f v2_1_0_full.yaml
+#kubectl apply -f v2_1_0_full.yaml
 
 echo
 logger_info "step2. Deploy ingress nginx controller"
