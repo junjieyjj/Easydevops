@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
 check_port_listen(){
-  port=${1-"80"}
-  host=${2-"127.0.0.1"}
-  timeout=${3-"2"}
-  retry_times=${4-"5"}
-  n=0
+  local port=${1-"80"}
+  local host=${2-"127.0.0.1"}
+  local timeout=${3-"2"}
+  local retry_times=${4-"5"}
+  local n=0
   until [ "$n" -ge ${retry_times} ]
   do
     curl -s ${host}:${port} > /dev/null
@@ -17,10 +17,10 @@ check_port_listen(){
 }
 
 check_local_port_listen(){
-  port=${1-"80"}
-  timeout=${2-"2"}
-  retry_times=${3-"5"}
-  n=0
+  local port=${1-"80"}
+  local timeout=${2-"2"}
+  local retry_times=${3-"5"}
+  local n=0
   until [ "$n" -ge ${retry_times} ]
   do
     netstat -tnlup | grep -w ${port} > /dev/null
@@ -32,10 +32,10 @@ check_local_port_listen(){
 }
 
 check_http(){
-  url=$1
-  timeout=${2-"2"}
-  retry_times=${3-"5"}
-  n=0
+  local url=$1
+  local timeout=${2-"2"}
+  local retry_times=${3-"5"}
+  local n=0
   until [ "$n" -ge ${retry_times} ]
   do
     status_code=$(curl -L -m 5 -s -o /dev/null -w %{http_code} ${url})
@@ -47,9 +47,9 @@ check_http(){
 }
 
 check_ssh(){
-  user=$1
-  host=${2-"127.0.0.1"}
-  port=${3-"22"}
+  local user=$1
+  local host=${2-"127.0.0.1"}
+  local port=${3-"22"}
   ssh -v -p ${port} ${user}@${host} > /dev/null 2>&1
   [ $? -eq 0 ] && { echo "ssh test by user: ${user}, host: ${host}, port: ${port} successful"; } || { echo "ERROR: ssh test by user: ${user}, host: ${host}, port: ${port} failed"; exit 110; }
 }
@@ -88,15 +88,15 @@ check_aws_env(){
 }
 
 check_pv_status(){
-  pv_name=$1
-  pv_status=$(kubectl get pv | grep ${pv_name} | wc -l)
+  local pv_name=$1
+  local pv_status=$(kubectl get pv | grep ${pv_name} | wc -l)
   [ ${pv_status} == 1 ] && echo "create ${pv_name} pv successful" || { echo "ERROR: create ${pv_name} pv failed"; exit 110; }
 }
 
 check_pvc_status(){
-  namespace=$1
-  pvc_name=$2
-  pvc_status=$(kubectl -n ${namespace} get pvc ${pvc_name} | grep Bound | wc -l)
+  local namespace=$1
+  local pvc_name=$2
+  local pvc_status=$(kubectl -n ${namespace} get pvc ${pvc_name} | grep Bound | wc -l)
   [ ${pvc_status} == 1 ] && echo "create ${pvc_name} pvc successful" || { echo "ERROR: create ${pv_name} pvc failed"; exit 110; }
 }
 
@@ -107,11 +107,11 @@ verify_params_null(){
 }
 
 check_k8s_pod_status(){
-  namespace=${1}
-  pod=${2}
-  timeout=${3-"10"}
-  retry_times=${4-"5"}
-  n=0
+  local namespace=${1}
+  local pod=${2}
+  local timeout=${3-"10"}
+  local retry_times=${4-"5"}
+  local n=0
   until [ "$n" -ge ${retry_times} ]
   do
     kubectl -n ${namespace} get pod ${pod} | grep Running > /dev/null
@@ -123,21 +123,21 @@ check_k8s_pod_status(){
 }
 
 check_cluster_role(){
-  cluster_role=$1
-  cluster_role_exist=$(kubectl get clusterrole | grep ${cluster_role} | wc -l)
+  local cluster_role=$1
+  local cluster_role_exist=$(kubectl get clusterrole | grep ${cluster_role} | wc -l)
   [ ${cluster_role_exist} == 1 ] && echo "create ${cluster_role} clusterrole successful" || { echo "ERROR: create ${cluster_role} clusterrole failed"; exit 110; }
 }
 
 check_cluster_rolebinding(){
-  namespace=$1
-  cluster_role_binding=$2
-  cluster_role_binding_exist=$(kubectl -n ${namespace} get clusterrolebindings | grep ${cluster_role_binding} | wc -l)
+  local namespace=$1
+  local cluster_role_binding=$2
+  local cluster_role_binding_exist=$(kubectl -n ${namespace} get clusterrolebindings | grep ${cluster_role_binding} | wc -l)
   [ ${cluster_role_binding_exist} == 1 ] && echo "create ${cluster_role_binding} clusterrolebinding successful" || { echo "ERROR: create ${cluster_role_binding} clusterrole failed"; exit 110; }
 }
 
 check_ingress(){
-  namespace=$1
-  name=$2
-  ingress_exist=$(kubectl -n ${namespace} get ingress | grep ${name} | wc -l)
+  local namespace=$1
+  local name=$2
+  local ingress_exist=$(kubectl -n ${namespace} get ingress | grep ${name} | wc -l)
   [ ${ingress_exist} == 1 ] && echo "create ${name} ingress successful" || { echo "ERROR: create ${name} ingress failed"; exit 110; }
 }

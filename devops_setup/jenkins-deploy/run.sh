@@ -72,7 +72,7 @@ check_cluster_role jenkins-slave-role
 check_cluster_rolebinding ${namespace} jenkins-slave-rolebinding
 
 # 生成jcasc.yaml
-logger_info "step4. 创建jcasc.yaml配置文件"
+logger_info "step4. Create jcasc.yaml"
 # render_jcasc_yaml()
 sed -e "s|GITLAB_SSH_KEY_BASE64|${gitlab_ssh_key_base64}|g" \
     -e "s|GITLAB_HTTP_PASSWORD|${gitlab_http_password}|g" \
