@@ -30,7 +30,7 @@ verify_params_null \
 logger_info "step1. Create shared volume dir /jenkins、/gitlab、/sonarqube、/jenkins-slave"
 kubectl -n ${namespace} exec -it busybox -- mkdir -p /data/jenkins /data/jenkins-slave /data/gitlab /data/sonarqube
 
-[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins | wc -l) != 0 ] && { logger_info "create dir /jenkins successful"; } || { logger_error "create dir /jenkins failed"; exit 110; }
-[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep gitlab | wc -l) != 0 ] && { logger_info "create dir /gitlab successful"; } || { logger_error "create dir /gitlab failed"; exit 110; }
-[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep sonarqube | wc -l) != 0 ] && { logger_info "create dir /sonarqube successful"; } || { logger_error "create dir /sonarqube failed"; exit 110; }
-[ $(kubectl -n ${namespace} exec -it busybox ls /data/ | grep jenkins-slave | wc -l) != 0 ] && { logger_info "create dir /jenkins-slave successful"; } || { logger_error "create dir /jenkins-slave failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox -- ls /data/ | grep jenkins | wc -l) != 0 ] && { logger_info "create dir /jenkins successful"; } || { logger_error "create dir /jenkins failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox -- ls /data/ | grep gitlab | wc -l) != 0 ] && { logger_info "create dir /gitlab successful"; } || { logger_error "create dir /gitlab failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox -- ls /data/ | grep sonarqube | wc -l) != 0 ] && { logger_info "create dir /sonarqube successful"; } || { logger_error "create dir /sonarqube failed"; exit 110; }
+[ $(kubectl -n ${namespace} exec -it busybox -- ls /data/ | grep jenkins-slave | wc -l) != 0 ] && { logger_info "create dir /jenkins-slave successful"; } || { logger_error "create dir /jenkins-slave failed"; exit 110; }
