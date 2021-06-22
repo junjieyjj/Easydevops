@@ -54,6 +54,7 @@ metadata:
 kubectl apply -f ingress-nginx.yaml
 ingress_controller_pod_name=$(kubectl -n ingress-nginx get pod | grep controller | awk '{print $1}')
 check_k8s_pod_status ingress-nginx ${ingress_controller_pod_name}
+sleep 10
 
 echo
 logger_info "step2. Deploy devops ingress resources"
