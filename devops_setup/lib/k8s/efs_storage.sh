@@ -1,7 +1,7 @@
 create_efs_pv(){
-    file_system_id=$1
-    pv_name=$2
-    sub_path=$3
+    local file_system_id=$1
+    local pv_name=$2
+    local sub_path=$3
   echo """
   apiVersion: v1
   kind: PersistentVolume
@@ -24,8 +24,8 @@ create_efs_pv(){
 }
 
 create_efs_pv_without_subpath(){
-    file_system_id=$1
-    pv_name=$2
+    local file_system_id=$1
+    local pv_name=$2
   echo """
   apiVersion: v1
   kind: PersistentVolume
@@ -48,9 +48,9 @@ create_efs_pv_without_subpath(){
 }
 
 create_efs_pvc(){
-    namespace=$1
-    pvc_name=$2
-    bind_pv_name=$3
+    local namespace=$1
+    local pvc_name=$2
+    local bind_pv_name=$3
   echo """
   apiVersion: v1
   kind: PersistentVolumeClaim
