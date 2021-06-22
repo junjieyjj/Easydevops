@@ -288,3 +288,24 @@ controller:
                   installers:
                   - sonarRunnerInstaller:
                       id: "4.6.2.2472"
+        jobs:
+          - script: >
+              pipelineJob("seed_job") {
+                  description("SeedJob Pipeline")
+                  keepDependencies(false)
+                  definition {
+                      cpsScm {
+                          scm {
+                              git {
+                                  remote {
+                                      url("git@GITLAB_FQDN_VAR:devops/cicd.git")
+                                      credentials("gitlab-ssh-key")
+                                  }
+                                  branch("master")
+                              }
+                          }
+                          scriptPath("SeedJob_Jenkinsfile")
+                      }
+                  }
+                  disabled(false)
+              }
