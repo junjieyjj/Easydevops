@@ -31,7 +31,7 @@ verify_params_null \
   ${cluster_name} 
 
 # deploy alb controller
-logger_info "step1. Deploy alb controller"
+#logger_info "step1. Deploy alb controller"
 
 #sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
 
@@ -40,7 +40,7 @@ logger_info "step1. Deploy alb controller"
 #kubectl apply -f v2_1_0_full.yaml
 
 echo
-logger_info "step2. Deploy ingress nginx controller"
+logger_info "step1. Deploy ingress nginx controller"
 echo """
 apiVersion: v1
 data:
@@ -54,7 +54,7 @@ metadata:
 kubectl apply -f ingress-nginx.yaml
 
 echo
-logger_info "step3. Deploy devops ingress resources"
+logger_info "step2. Deploy devops ingress resources"
 echo """
 apiVersion: extensions/v1beta1
 kind: Ingress
