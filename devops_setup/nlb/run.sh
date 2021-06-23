@@ -41,6 +41,7 @@ verify_params_null \
 
 echo
 logger_info "step1. Deploy ingress nginx controller"
+create_namespace ingress-nginx
 echo """
 apiVersion: v1
 data:
