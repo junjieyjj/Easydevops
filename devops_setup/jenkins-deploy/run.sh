@@ -58,6 +58,7 @@ check_pvc_status ${namespace} jenkins-pvc
 
 # create jenkins slave pv pvc
 logger_info "step2. Create jenkins-slave-pv、jenkins-slave-pvc"
+create_namespace jenkins-slave
 [ $(kubectl get pv jenkins-slave-pv 2>/dev/null | wc -l ) == 0 ] && { logger_info "create jenkins-slave-pv"; create_efs_pv ${file_system_id} jenkins-slave-pv jenkins-slave; } || { logger_info "jenkins-slave-pv is already existed, not create"; }
 check_pv_status jenkins-slave-pv
 
