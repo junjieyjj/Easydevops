@@ -4,16 +4,9 @@ export AWS_ACCESS_KEY_ID=AKIATETRFRPDKSP5G7FT
 export AWS_SECRET_ACCESS_KEY=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
 export AWS_DEFAULT_REGION=ap-east-1
 export EKS_CLUSTER=jack-cluster
-export AWS_ACCOUNT_ID=216059448262
-
-# S3桶名称，用于存放Jenkins插件包
-s3_bucket_name=jack-test-devops
 
 # EFS文件系统的<file_system_id>
 file_system_id=fs-b7225f7a
-
-# busybox镜像地址
-busybox_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/busybox:1.32
 
 # jenkins镜像地址
 jenkins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins:2.293-plugins
@@ -54,6 +47,7 @@ jenkins_slave_namespace='jenkins-slave'
 # aws配置相关
 aws_access_key='AKIATETRFRPDKSP5G7FT'
 aws_secret_key='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'
+docker_registry_host='216059448262.dkr.ecr.ap-east-1.amazonaws.com'
 
 # k8s
 ## 默认cd的k8s集群 default config，base64编码后的值

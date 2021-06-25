@@ -1,10 +1,15 @@
+# LOGS CONFIG
+# ------------------------------------------------------
+LOG_DEBUG_LEVEL=0
+LOG_OUTPUT_CONSOLE=true
+TZ="Asia/Shanghai"
+
 # AWS CONFIG
 # ------------------------------------------------------
 export AWS_ACCESS_KEY_ID=AKIATETRFRPDKSP5G7FT
 export AWS_SECRET_ACCESS_KEY=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
 export AWS_DEFAULT_REGION=ap-east-1
 export EKS_CLUSTER=jack-cluster
-export AWS_ACCOUNT_ID=216059448262
 
 ## EFS file system id
 file_system_id=fs-b7225f7a
@@ -30,14 +35,14 @@ limits_cpu=2000m
 limits_mem=4096Mi
 
 ## Specify the postgresql which gitlab connect to
-gitlab_postgresql_db_host=gitlab.cluster-cof70yepyr2j.ap-east-1.rds.amazonaws.com
+gitlab_postgresql_db_host=gitlab-postgres.devops.svc.cluster.local
 gitlab_postgresql_db_database=gitlab
-gitlab_postgresql_db_username=devops
+gitlab_postgresql_db_username=postgres
 gitlab_postgresql_db_password=admin1234
 gitlab_postgresql_db_port=5432
 
 ## Specify the redis which gitlab connect to
-gitlab_redis_host=gitlab-redis.fob5vn.ng.0001.ape1.cache.amazonaws.com
+gitlab_redis_host=gitlab-redis.devops.svc.cluster.local
 gitlab_redis_port=6379
 
 ## Specify the gitlab service user username
@@ -69,11 +74,11 @@ sonarqube_plugins_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/sona
 curl_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/curl:latest
 
 ## Specify the postgresql which sonarqube connect to
-sonarqube_postgresql_db_host=sonarqube.cluster-cof70yepyr2j.ap-east-1.rds.amazonaws.com
-sonarqube_postgresql_db_database=sonar3
+sonarqube_postgresql_db_host=sonarqube-postgres.devops.svc.cluster.local
+sonarqube_postgresql_db_database=sonar
 sonarqube_postgresql_db_username=postgres
 sonarqube_postgresql_db_password=admin1234
-sonarqube_postgresql_db_port=5431
+sonarqube_postgresql_db_port=5432
 
 ## Specify the sonarqube resources limit
 requests_cpu=501m
@@ -119,6 +124,7 @@ jenkins_url='http://jenkins.devops.svc.cluster.local:8080'
 jenkins_slave_namespace='jenkins-slave'
 
 ## Specify ak sk for aws ecr account
+docker_registry_host='216059448262.dkr.ecr.ap-east-1.amazonaws.com'
 aws_access_key='AKIATETRFRPDKSP5G7FT'
 aws_secret_key='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'
 

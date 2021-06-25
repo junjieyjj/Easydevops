@@ -4,9 +4,13 @@ SCRIPT_BASEDIR=$(dirname "$0")
 cd ${SCRIPT_BASEDIR}
 SCRIPT_BASEDIR="$PWD"
 PROJECT_BASEDIR=$(dirname "${SCRIPT_BASEDIR}")
+LOG_DIR=${PROJECT_BASEDIR}/logs
 
-# include lib/*
-source ${PROJECT_BASEDIR}/lib/*
+# include lib
+source ${PROJECT_BASEDIR}/lib/utils/logger.sh
+source ${PROJECT_BASEDIR}/lib/utils/utils.sh
+source ${PROJECT_BASEDIR}/lib/utils/verify.sh
+source ${PROJECT_BASEDIR}/lib/k8s/utils.sh
 
 # include config
 if [ 0 == $(ps -p $PPID o cmd | grep install.sh | wc -l) ];then
@@ -16,17 +20,28 @@ else
   [ -f "${PROJECT_BASEDIR}/config" ] && { source ${PROJECT_BASEDIR}/config; } || { echo_red "ERROR: ${PROJECT_BASEDIR}/config not exist"; exit 110; }
 fi
 
+echo_green "Start Config NLB Ingress"
+echo_green "#######################################################"
+
+# check aws config
+check_aws_env
+
+# check config params
+verify_params_null \
+  ${cluster_name} 
+
 # deploy alb controller
-echo_green "step1. Deploy alb controller"
+#logger_info "step1. Deploy alb controller"
 
-sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
+#sed "s/INSERT_CLUSTER_NAME/${cluster_name}/g" v2_1_0_full.yaml.template > v2_1_0_full.yaml
 
-kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
+#kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v1.0.2/cert-manager.yaml
 
-kubectl apply -f v2_1_0_full.yaml
+#kubectl apply -f v2_1_0_full.yaml
 
 echo
-echo_green "step2. Deploy ingress nginx controller"
+logger_info "step1. Deploy ingress nginx controller"
+create_namespace ingress-nginx
 echo """
 apiVersion: v1
 data:
@@ -38,9 +53,12 @@ metadata:
 """ | kubectl apply -f -
 
 kubectl apply -f ingress-nginx.yaml
+ingress_controller_pod_name=$(kubectl -n ingress-nginx get pod | grep controller | awk '{print $1}')
+check_k8s_pod_status ingress-nginx ${ingress_controller_pod_name}
+sleep 10
 
 echo
-echo_green "step3. Deploy devops ingress resources"
+logger_info "step2. Deploy devops ingress resources"
 echo """
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -75,7 +93,7 @@ spec:
 """ | kubectl apply -f -
 
 echo
-echo_green "step4. Renew coredns configmap and restart pod"
+logger_info "step4. Renew coredns configmap and restart pod"
 echo """
 apiVersion: v1
 data:
@@ -107,3 +125,6 @@ metadata:
 """ | kubectl apply -f -
 
 kubectl -n kube-system get pod | grep coredns | awk '{print $1}' | while read line; do kubectl -n kube-system delete pod $line ; done 
+
+echo_green "#######################################################"
+echo_green "Config NLB Ingress Done..."

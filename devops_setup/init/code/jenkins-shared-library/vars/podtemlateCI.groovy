@@ -5,25 +5,18 @@ kind: Pod
 metadata:
   namespace: jenkins-slave
   labels:
-    jenkins: slave
-    jenkins/ci: "true"
+    role: slave
 spec:
   containers:
-  - name: "jnlp"
-    image: "216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins-slave-ci:v13"  
-    imagePullPolicy: "IfNotPresent"
-    tty: true
+  - name: jnlp
+    image: 216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins-slave:centos
     volumeMounts:
     - mountPath: "/var/run/docker.sock"
       name: "volume-0"
       readOnly: false 
-    - mountPath: "/home/jenkins/.docker"
+    - mountPath: "/root/.docker"
       name: "docker-cache"
-    - mountPath: "/var/jenkins_home/amwaybuild"
-      name: "volume-1"
-      readOnly: false
-      subPath: "jenkins-slave/data"
-    - mountPath: "/home/jenkins/.npm"
+    - mountPath: "/root/.npm"
       name: "volume-1"
       readOnly: false
       subPath: "jenkins-slave/npm_cache/npm"
@@ -33,7 +26,11 @@ spec:
       subPath: "jenkins-slave/maven_cache/m2"
     - name: cache-jacoco-maven-plugin
       mountPath: /root/.m2/repository/org/jacoco/jacoco-maven-plugin
-    workingDir: /home/jenkins/agent
+    workingDir: /tmp
+    env:
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/tmp"
+    imagePullPolicy: Always
   volumes:
   - hostPath:
       path: "/var/run/docker.sock"

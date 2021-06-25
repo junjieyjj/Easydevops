@@ -140,7 +140,7 @@ def build(Map METADATA) {
 
         case "maven":
             // 加载shared-libraries resources资源到当前目录
-            def mvn_settings = libraryResource 'maven_settings/mvn_settings.xml'
+            def mvn_settings = libraryResource 'maven_settings/mvn_default_settings.xml'
             writeFile text: mvn_settings, file: "./mvn_settings.xml", encoding: "UTF-8"
 
             // maven_package
@@ -224,7 +224,7 @@ def unitTest(Map METADATA) {
 
         case "maven":
             // 加载shared-libraries resources资源到当前目录
-            def mvn_settings = libraryResource 'maven_settings/mvn_settings.xml'
+            def mvn_settings = libraryResource 'maven_settings/mvn_default_settings.xml'
             writeFile text: mvn_settings, file: "./mvn_settings.xml", encoding: "UTF-8"
 
             // maven_package
@@ -307,7 +307,7 @@ def coverage(Map METADATA) {
 
         case "maven":
             // 加载shared-libraries resources资源到当前目录
-            def mvn_settings = libraryResource 'maven_settings/mvn_settings.xml'
+            def mvn_settings = libraryResource 'maven_settings/mvn_default_settings.xml'
             writeFile text: mvn_settings, file: "./mvn_settings.xml", encoding: "UTF-8"
 
             // maven_package
@@ -400,7 +400,7 @@ def sonarScan(Map METADATA) {
 
         case "maven":
             // 加载shared-libraries resources资源到当前目录
-            def mvn_settings = libraryResource 'maven_settings/mvn_settings.xml'
+            def mvn_settings = libraryResource 'maven_settings/mvn_default_settings.xml'
             writeFile text: mvn_settings, file: "./mvn_settings.xml", encoding: "UTF-8"
 
             // 导入sonarqube环境配置

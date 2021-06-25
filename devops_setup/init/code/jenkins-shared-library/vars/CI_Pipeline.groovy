@@ -40,8 +40,6 @@ def call(body) {
         }
         environment {
             GIT_CREDENTIAL_ID = 'gitlab-ssh-key'
-            DOCKER_REGISTRY_HOST = "216059448262.dkr.ecr.ap-east-1.amazonaws.com"
-            DOCKER_REGISTRY_CREDENTIAL_ID = 'aws-registry-secret'
             //DOCKER_REGISTRY_HOST = "636957932458.dkr.ecr.ap-east-1.amazonaws.com"
             //DOCKER_REGISTRY_CREDENTIAL_ID = "aws"
         }

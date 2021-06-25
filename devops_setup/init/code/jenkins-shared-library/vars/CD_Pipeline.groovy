@@ -36,12 +36,10 @@ def call(body) {
         }
         environment {
             GIT_CREDENTIAL_ID = 'gitlab-ssh-key'
-            DOCKER_REGISTRY_HOST = "216059448262.dkr.ecr.ap-east-1.amazonaws.com"
-            DOCKER_REGISTRY_CREDENTIAL_ID = "aws-registry-secret"
 
             // K8s KubeConfig凭证【Credentials（凭证）- Secret file（文件类型凭证）】
-            AWS_ACCESS_KEY_ID="AKIATETRFRPDKSP5G7FT"
-            AWS_SECRET_ACCESS_KEY="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"
+            AWS_ACCESS_KEY_ID="xxxxxxxxxxxxxxxxx"
+            AWS_SECRET_ACCESS_KEY="xxxxxxxxxxxxxxxxx"
             AWS_DEFAULT_REGION="ap-east-1"
             KUBECONF_CREDENTIAL_ID = 'k8s-test-config'
             KUBECONF = credentials("${KUBECONF_CREDENTIAL_ID}")
