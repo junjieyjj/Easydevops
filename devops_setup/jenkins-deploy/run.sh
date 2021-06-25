@@ -46,7 +46,8 @@ verify_params_null \
   ${jenkins_url} \
   ${jenkins_slave_namespace} \
   ${aws_access_key} \
-  ${aws_secret_key} 
+  ${aws_secret_key} \
+  ${docker_registry_host} 
 
 # create jenkins pv pvc
 logger_info "step1. Create jenkins-pv、jenkins-pvc"
@@ -85,6 +86,7 @@ sed -e "s|GITLAB_SSH_KEY_BASE64|${gitlab_ssh_key_base64}|g" \
     -e "s|JENKINS_URL|${jenkins_url}|g" \
     -e "s|GITLAB_FQDN_VAR|${gitlab_fqdn}|g" \
     -e "s|JENKINS_FQDN_VAR|${jenkins_fqdn}|g" \
+    -e "s|DOCKER_REGISTRY_HOST_VAR|${docker_registry_host}|g" \
     -e "s|K8S_DEFAULT_CONFIG_BASE64|${k8s_default_config_base64}|g" \
     -e "s|SONARQUBE_FQDN_VAR|${sonarqube_fqdn}|g" jcasc.yaml.template \
     > jcasc.yaml

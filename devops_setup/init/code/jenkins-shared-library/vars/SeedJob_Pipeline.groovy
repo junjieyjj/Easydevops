@@ -271,13 +271,13 @@ def get_group_list(workspace){
     ArrayList group_list = []
     new File("${workspace}/AppMetadata").eachFileRecurse() { file -> 
         String path = file.getAbsolutePath()
-        println ("path_1: ${path}")
+        // println ("path_1: ${path}")
         if (path.split('AppMetadata')[1].split('/').size() != 4) {
             return
         }
-        println("path: ${path}")
+        // println("path: ${path}")
         String group = path.split('/')[-3]
-        println("group: ${group}")
+        // println("group: ${group}")
         if(!group_list.contains(group)){
             group_list.add(group)
         }

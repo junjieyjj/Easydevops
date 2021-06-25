@@ -47,6 +47,7 @@ jenkins_slave_namespace='jenkins-slave'
 # aws配置相关
 aws_access_key='AKIATETRFRPDKSP5G7FT'
 aws_secret_key='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'
+docker_registry_host='216059448262.dkr.ecr.ap-east-1.amazonaws.com'
 
 # k8s
 ## 默认cd的k8s集群 default config，base64编码后的值

@@ -1,0 +1,2 @@
+FROM busybox:1.32
+ADD sonarqube-plugins.tar.gz /tmp/sonarqube/extensions

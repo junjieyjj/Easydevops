@@ -124,6 +124,7 @@ jenkins_url='http://jenkins.devops.svc.cluster.local:8080'
 jenkins_slave_namespace='jenkins-slave'
 
 ## Specify ak sk for aws ecr account
+docker_registry_host='216059448262.dkr.ecr.ap-east-1.amazonaws.com'
 aws_access_key='AKIATETRFRPDKSP5G7FT'
 aws_secret_key='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'
 

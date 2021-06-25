@@ -37,8 +37,8 @@ controller:
                   scope: GLOBAL
               - aws:
                   accessKey: "AWS_ACCESS_KEY"
-                  description: "aws-registry-secret"
-                  id: "aws-registry-secret"
+                  description: "registry-secret"
+                  id: "registry-secret"
                   scope: GLOBAL
                   secretKey: "AWS_SECRET_KEY"
               - string:
@@ -81,6 +81,10 @@ controller:
                 value: "GITLAB_FQDN_VAR"
               - key: "JACOCO_COVERAGE_NUM"
                 value: "0"
+              - key: "DOCKER_REGISTRY_HOST"
+                value: "DOCKER_REGISTRY_HOST_VAR"
+              - key: "DOCKER_REGISTRY_CREDENTIAL_ID"
+                value: "registry-secret"
           labelAtoms:
           - name: "master"
           markupFormatter: "plainText"
