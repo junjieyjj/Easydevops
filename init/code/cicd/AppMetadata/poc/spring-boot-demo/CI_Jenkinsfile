@@ -14,9 +14,14 @@ CI_Pipeline {
     // 必填：构建类型（可选：maven、npm、none）
     BUILD_TYPE = 'maven'
 
+    // 可选：代码目录类型，maven_package（单个模块，默认值），maven_multi_module_package（多个模块）
     //MAVEN_TYPE = 'maven_deploy'
-    //MAVEN_TYPE = 'maven_multi_module_package'
     
+    // 跳过单元测试、跳过覆盖率测试、跳过代码扫描开关，默认都为false
+    // SKIP_UNIT_TEST = 'true'
+    // SKIP_COVERAGE = 'true'
+    // SKIP_SONAR_SCAN = 'true'
+
     // 非必填：NODEJS版本（可选：6、8、10、12、14，默认为10）
     //NODEJS_VER = '12'
 

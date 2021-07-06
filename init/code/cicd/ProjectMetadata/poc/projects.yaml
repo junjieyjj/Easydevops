@@ -1,0 +1,4 @@
+- name: spring-boot-demo
+  group: poc
+  pd_leaders: ["admin", "junjie.ye"] 
+  qa_leaders: ["admin", "junjie.ye"] 
