@@ -114,6 +114,10 @@ def call(body) {
             }
 
             stage("Unit_Test") {
+                when {
+                      equals expected: "false", 
+                      actual: METADATA.SKIP_UNIT_TEST
+                    }
                 steps {
                     script{
                         dir("src_code") {
@@ -129,6 +133,10 @@ def call(body) {
             }
 
             stage("Coverage") {
+                when {
+                      equals expected: "false", 
+                      actual: METADATA.SKIP_COVERAGE
+                    }
                 steps {
                     script{
                         dir("src_code") {
@@ -144,6 +152,10 @@ def call(body) {
             }
 
             stage("Sonar_Scan") {
+                when {
+                      equals expected: "false", 
+                      actual: METADATA.SKIP_SONAR_SCAN
+                    }
                 steps {
                     script{
                         dir("src_code") {

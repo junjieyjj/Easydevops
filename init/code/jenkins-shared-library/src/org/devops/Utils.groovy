@@ -31,6 +31,11 @@ def getProjectParams(String jobType, Map config) {
         assert (config.BUILD_TYPE && (config.BUILD_TYPE != null)): "ERROR: 键不存在或值为空"
         assert config?.BUILD_TYPE ==~ /maven|npm|none/: "ERROR: BUILD_TYPE构建类型不在允许的列表中"
 
+        // 单元测试，覆盖率统计，代码扫描开关
+        config.SKIP_UNIT_TEST = config.SKIP_UNIT_TEST ?: 'false'
+        config.SKIP_COVERAGE = config.SKIP_COVERAGE ?: 'false'
+        config.SKIP_SONAR_SCAN = config.SKIP_SONAR_SCAN ?: 'false'
+
         // NODEJS_VER赋值与版本判断
         if (config.BUILD_TYPE?.contains("npm")) {
             config?.NODEJS_VER = config.NODEJS_VER ?: '10'

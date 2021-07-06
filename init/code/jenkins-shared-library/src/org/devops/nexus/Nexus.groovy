@@ -46,3 +46,24 @@ def pushArtifactFile(Map METADATA, String nexusCscredentialsId, String nexusUrl,
         }
     }
 }
+
+// 上传制品依赖jar
+def deployToNexus(Map METADATA, String nexusCscredentialsId, String nexusUrl, String nexusCustomRepository) {
+    maven_snapshots_repository = env.MAVEN_SNAPSHOTS_REPOSITORY ?: 'maven-snapshots'
+    maven_release_repository = env.MAVEN_RELEASES_REPOSITORY ?: 'maven-releases'
+    repository_message = """
+    ${nexusUrl}/repository/${maven_snapshots_repository}
+    ${nexusUrl}/repository/${maven_release_repository}
+    """
+    log.info ("开始执行mvn deploy上传")
+    log.info ("目标路径：${repository_message}")
+
+    if (METADATA.MAVEN_TYPE == 'maven_multi_module_package') {
+        withCredentials([usernamePassword(credentialsId: nexusCscredentialsId, usernameVariable: 'nexusUser', passwordVariable: 'nexusPassword')]) {
+            sh "mvn deploy -Dmaven.test.skip=true -DaltSnapshotDeploymentRepository=${maven_snapshots_repository}::default::http://nexus-hk.intranet.local/repository/amway-snapshots -DaltReleaseDeploymentRepository=${maven_release_repository}::default::${nexusUrl}/repository/${maven_release_repository}"
+        }
+    }
+    else {
+        log.info ("不需要执行mvn deploy")
+    }
+}

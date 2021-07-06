@@ -1,6 +1,7 @@
 #!groovy
 package org.devops
 import org.devops.deploy.K8s
+import org.devops.Jenkins
 import groovy.io.FileType
 
 // Git代码迁出
@@ -67,7 +68,15 @@ def getArtifactFile(Map METADATA) {
     // 遍历target目录查找制品文件
     println "***INFO：./target目录下查找构建制品文件"
     String currentPath = env.WORKSPACE + '/src_code'
-    def targetPath = new File( currentPath + '/target' )
+    if ( METADATA.MAVEN_TYPE == 'maven_package'  ) {
+      targetPath = new File( currentPath + '/target' )
+    }
+    else if ( METADATA.MAVEN_TYPE == 'maven_multi_module_package' ) {
+      // 获取根pom.xml的modules的最后一个模块
+      def pom = readMavenPom file: 'pom.xml'
+      def last_module = pom.modules[-1]
+      targetPath = new File( currentPath + "${last_module}/target" )
+    }
     echo "${targetPath}"
     sh "ls ${targetPath}"
     if( targetPath.exists() ) {
@@ -156,6 +165,9 @@ def build(Map METADATA) {
 
                 // 上传制品文件
                 nexus.pushArtifactFile (METADATA, 'nexus3_admin', 'http://11.0.0.201:8081/nexus', 'ci-artifact')
+
+                // 部署到snapshots和releases库
+                nexus.deployToNexus (METADATA, 'nexus3_admin', 'http://11.0.0.201:8081/nexus', 'ci-artifact')
             }
 
             // maven_deploy
@@ -169,11 +181,17 @@ def build(Map METADATA) {
 
             // maven_multi_module_package
             if ( METADATA.MAVEN_TYPE == 'maven_multi_module_package'  ) {
-                sh '''
-                set +x
-                echo 待支持
-                exit 1
-                '''
+                log.info ("开始构建应用程序")
+                log.info ("BUILD_TYPE：${METADATA.BUILD_TYPE}")
+                log.info ("MAVEN_TYPE：${METADATA.MAVEN_TYPE}")
+
+                sh 'mvn -T 1C -e -B -U -s ./mvn_settings.xml -Dmaven.test.skip=true clean package'
+
+                // 查找制品文件
+                getArtifactFile (METADATA)
+
+                // 部署到snapshots和releases库
+                // nexus.deployToNexus (METADATA, 'nexus3_admin', 'http://11.0.0.201:8081/nexus', 'ci-artifact')
             }
 
             // maven_multi_module_deploy
@@ -183,6 +201,8 @@ def build(Map METADATA) {
                 echo 待支持
                 exit 1
                 '''
+                // 部署到snapshots和releases库
+                nexus.deployToNexus (METADATA, 'nexus3_admin', 'http://11.0.0.201:8081/nexus', 'ci-artifact')
             }
           break
 
@@ -443,6 +463,112 @@ def sonarScan(Map METADATA) {
       }
 }
 
+
+// 检查用户是否在元数据中
+def checkUser(Map METADATA){
+    echo ('========================= Check User ========================= ')
+
+    def group_name = env.PROJECT_GROUP_NAME
+    def project_name = env.PROJECT_NAME
+    def deploy_env = env.ENV
+    def trigger_user = METADATA.TRIGGER_USER
+    def leader = [:]
+    
+    if(fileExists("ProjectMetadata/${group_name}/projects.yaml")){
+        project_meta_data = readYaml file: "projectmetadata/${group}/projects.yaml"
+    }else {
+        echo "***ERROR：ProjectMetadata/${group}/projects.yaml 不存在, 请检查" 
+        sh "exit 1"
+    }
+
+    project_exist = "false"
+    for (p in project_meta_data) {
+        if (p.name == project_name && p.group == group ) {
+          project_exist = "true"
+          // 校验project中是否含有leaders key
+          if (p."${deploy_env}_leaders" == null){
+              echo "***ERROR: ${deploy_env}_leaders 不存在, 请修改"
+          }
+            
+          // 校验值是否为ArrayList类型或空
+          if (p."${deploy_env}_leaders" == []) {
+            leader_list_lower = []
+          }
+          else if (p."${deploy_env}_leaders" instanceof ArrayList) {
+            // 用户名转换为小写
+            for (user in p."${deploy_env}_leaders") {
+              // 转换为小写比较，避免大小写不一致
+              leader_list_lower.add(user.toLowerCase())
+            }
+          }
+          else {
+            echo """***ERROR: ${deploy_env}_leaders 不是 ArrayList 或 [] 类型, 请修改.. eg. ["zhangsan","lisi"]，请检查.."""
+            sh "exit 1"
+          }
+          break
+        }
+    }
+
+    // 判断projects.yaml是否存在project
+    if (project_exist == "false") {
+      echo "***ERROR: projects.yaml没找到${project_name}项目，请检查.."
+      sh 'exit 1'
+    }
+
+    echo "检查当前用户: ${current_user}"
+    // 判断是手工触发，还是自动触发
+    def jobBuildType = Jenkins.getJobTriggerBuildType()
+    // 手工运行方式，获取currentUser
+    if ( jobBuildType == 'ManualBuild' ) {
+      echo "触发方式: 手工触发"
+      // 获取当前Jenkins登录用户，与projects.yaml中的列表对比
+      def current_user = currentUser()
+      if (current_user) {
+        // 转换为小写比较，避免大小写不一致
+        current_user = current_user.toLowerCase()
+      }else {
+          current_user = ''
+      }
+    }
+    // webhook触发，获取远程触发的username
+    else if ( jobBuildType == 'TriggerBuild' ){
+      // 获取当前webhook触发用户，与projects.yaml中的列表对比
+      def current_user = trigger_user
+      if (current_user) {
+        // 转换为小写比较，避免大小写不一致
+        current_user = current_user.toLowerCase()
+      }else {
+          current_user = ''
+      }
+    }
+    else {
+      echo "***ERROR: 不支持其它触发方式"
+      sh 'exit 1'
+    }
+
+    // 发布环境非pd，允许为[]，代表可所有人员可发布
+    if (deploy_env != 'pd') {
+      if ("${deploy_env}_leaders" == []) {
+        echo "检查当前用户: ${current_user} 发布环境: ${deploy_env} , Pass!"
+      }else {
+        if ("${deploy_env}_leaders".contains(current_user)) {
+            echo "检查当前用户: ${current_user} 发布环境: ${deploy_env} , Pass!"
+        }else {
+            echo "不允许部署 ${deploy_env} 环境, ${deploy_env}管理员: ${${deploy_env}_leaders}, 当前用户: ${current_user}"
+            sh 'exit 1'
+        }
+      }
+    }
+    else if (deploy_env == 'pd') {
+      if ("${deploy_env}_leaders".contains(current_user)) {
+          echo "检查当前用户: ${current_user} 发布环境: ${deploy_env} , Pass!"
+      }else {
+          echo "不允许部署 ${deploy_env} 环境, ${deploy_env}管理员: ${${deploy_env}_leaders}, 当前用户: ${current_user}"
+          sh 'exit 1'
+      }
+    }
+    echo ('========================= Check User ========================= ')
+}
 
 // 发布方法入口（发布类型判断）
 def deploy(Map METADATA) {

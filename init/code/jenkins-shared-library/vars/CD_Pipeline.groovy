@@ -81,6 +81,17 @@ def call(body) {
                 }
             }
 
+            stage("Check_User") {
+                steps {
+                    script{
+                        metric {
+                            // 检查用户权限
+                            tools.checkUser(METADATA)
+                        }
+                    }
+                }
+            }
+
             stage("Deploy") {
                 steps {
                     script{

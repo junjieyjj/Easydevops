@@ -87,6 +87,8 @@ def call(body) {
                             env.BUILD_TAG = jenkins.setJobDisplayName()
                             // 设置Job描述信息
                             jenkins.setJobDesc('CONFIG')
+                            // 设置触发用户
+                            METADATA.TRIGGER_USER = user_username
                             // 上传流水线状态
                             tools.gitlabCommitStatusPush { }
                         }
@@ -94,7 +96,18 @@ def call(body) {
                 }
             }
 
-            stage("DeployConfig") {
+            stage("Check_User") {
+                steps {
+                    script{
+                        metric {
+                            // 检查用户权限
+                            tools.checkUser(METADATA)
+                        }
+                    }
+                }
+            }
+
+            stage("Deploy") {
                 steps {
                     script{
                         metric {

@@ -39,6 +39,10 @@ def dockerBuild(String dockerFile) {
     String buildTag = "${env.BUILD_TAG}"
     String gitCommitLong = "${env.GIT_COMMIT_LONG}"
 
+    if (METADATA.MAVEN_TYPE == 'maven_multi_module_package') {
+        dockerBUildMavenMultiModulePackage()
+    }
+    else {
     // 创建Docker忽略文件
     writeFile file: "./.dockerignore", text: """\
     **/Dockerfile
@@ -69,6 +73,29 @@ def dockerBuild(String dockerFile) {
         set +x && echo ***INFO：复制Dockerfile文件到当前应用目录
         set -x && /bin/cp -f ${workspace}/DockerFiles/${dockerFile} ./Dockerfile
         set +x && echo ***INFO：构建Docker镜像
+        set +x && cat ./Dockerfile
+        set -x && docker build -t ${projectName}:${buildTag} --build-arg git_hash=${gitCommitLong} ./
+    """
+    }
+}
+
+dockerBUildMavenMultiModulePackage(){
+    // 获取根pom.xml的modules的最后一个模块的jar打包镜像
+    def pom = readMavenPom file: 'pom.xml'
+    def last_module = pom.modules[-1]
+    dir("${last_module}")
+    // 创建Docker忽略文件
+    writeFile file: "./.dockerignore", text: """\
+    **/Dockerfile
+    **/.git
+    **/.dockerignore
+    """.stripIndent()
+    // 复制对应的DockerFile到当前应用目录下
+    sh """
+        set +x && echo ***INFO：复制Dockerfile文件到当前应用目录
+        set -x && /bin/cp -f ${workspace}/DockerFiles/${dockerFile} ./Dockerfile
+        set +x && echo ***INFO：构建Docker镜像
+        set +x && cat ./Dockerfile
         set -x && docker build -t ${projectName}:${buildTag} --build-arg git_hash=${gitCommitLong} ./
     """
 }
