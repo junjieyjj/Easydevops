@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "gitlab-ce.fullname" . }}
+  labels:
+    app: {{ template "gitlab-ce.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+  - name: ssh
+    port: {{ .Values.service.ssh.port | int }}
+    targetPort: ssh
+    {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.ssh.nodePort))) }}
+    nodePort: {{ .Values.service.ssh.nodePort | int }}
+    {{- end }}
+  - name: http
+    port: {{ .Values.service.http.port | int }}
+    targetPort: http
+    {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.http.nodePort))) }}
+    nodePort: {{ .Values.service.http.nodePort | int }}
+    {{- end }}
+  - name: https
+    port: {{ .Values.service.https.port | int }}
+    targetPort: https
+    {{- if (and (eq .Values.service.type "NodePort") (not (empty .Values.service.https.nodePort))) }}
+    nodePort: {{ .Values.service.https.nodePort | int }}
+    {{- end }}
+  selector:
+    app: {{ template "gitlab-ce.fullname" . }}

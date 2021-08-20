@@ -1,0 +1,315 @@
+controller:
+  initScripts:
+    - |
+      def jcascFile = new File('/var/jenkins_home/casc_configs/jcasc.yaml')
+      jcascFile.delete()
+  containerEnv:
+    - name: GITLAB_SSH_KEY
+      value: GITLAB_SSH_KEY_BASE64
+    - name: K8S_TEST_CONFIG
+      value: K8S_DEFAULT_CONFIG_BASE64
+  JCasC:
+    defaultConfig: true
+    configScripts:
+      jcasc: |
+        credentials:
+          system:
+            domainCredentials:
+            - credentials:
+              - basicSSHUserPrivateKey:
+                  description: "gitlab-ssh-key"
+                  id: "gitlab-ssh-key"
+                  privateKeySource:
+                    directEntry:
+                      privateKey: ${decodeBase64:${GITLAB_SSH_KEY}}
+                  scope: GLOBAL
+                  username: "service"
+              - usernamePassword:
+                  description: "gitlab-http-user-password"
+                  id: "gitlab-http-user-password"
+                  password: "GITLAB_HTTP_PASSWORD"
+                  scope: GLOBAL
+                  username: "service"
+              - gitLabApiTokenImpl:
+                  apiToken: "GITLAB_API_TOKEN"
+                  description: "gitlab-api-token"
+                  id: "gitlab-api-token"
+                  scope: GLOBAL
+              - aws:
+                  accessKey: "AWS_ACCESS_KEY"
+                  description: "registry-secret"
+                  id: "registry-secret"
+                  scope: GLOBAL
+                  secretKey: "AWS_SECRET_KEY"
+              - string:
+                  description: "sonarqube-api-token"
+                  id: "sonarqube-api-token"
+                  scope: GLOBAL
+                  secret: "SONARQUBE_API_TOKEN"
+              - file:
+                  description: "k8s-test-config"
+                  fileName: "k8s-test-config"
+                  id: "k8s-test-config"
+                  scope: GLOBAL
+                  secretBytes: ${decodeBase64:${K8S_TEST_CONFIG}}
+              domain:
+                description: "devops credentials info"
+                name: "devops"
+        jenkins:
+          agentProtocols:
+          - "JNLP4-connect"
+          - "Ping"
+          clouds:
+          - kubernetes:
+              containerCap: 10
+              containerCapStr: "10"
+              jenkinsTunnel: "JENKINS_TUNNEL"
+              jenkinsUrl: "JENKINS_URL"
+              name: "kubernetes"
+              namespace: "devops"
+              serverUrl: "https://kubernetes.default.svc.cluster.local:443"
+          crumbIssuer:
+            standard:
+              excludeClientIPFromCrumb: false
+          disableRememberMe: false
+          disabledAdministrativeMonitors:
+          - "GitHubHookRegisterProblemMonitor"
+          globalNodeProperties:
+          - envVars:
+              env:
+              - key: "GITLAB_FQDN"
+                value: "GITLAB_FQDN_VAR"
+              - key: "JACOCO_COVERAGE_NUM"
+                value: "0"
+              - key: "DOCKER_REGISTRY_HOST"
+                value: "DOCKER_REGISTRY_HOST_VAR"
+              - key: "DOCKER_REGISTRY_CREDENTIAL_ID"
+                value: "registry-secret"
+          labelAtoms:
+          - name: "master"
+          markupFormatter: "plainText"
+          mode: NORMAL
+          myViewsTabBar: "standard"
+          numExecutors: 2
+          primaryView:
+            all:
+              name: "all"
+          projectNamingStrategy: "standard"
+          quietPeriod: 5
+          remotingSecurity:
+            enabled: false
+          scmCheckoutRetryCount: 0
+          slaveAgentPort: 50000
+          updateCenter:
+            sites:
+            - id: "default"
+              url: "https://updates.jenkins.io/update-center.json"
+          views:
+          - all:
+              name: "all"
+          - list:
+              columns:
+              - "status"
+              - "weather"
+              - "jobName"
+              - "lastSuccess"
+              - "lastFailure"
+              - "lastDuration"
+              - "buildButton"
+              jobNames:
+              - "seed_job"
+              name: "devops"
+        security:
+          apiToken:
+            creationOfLegacyTokenEnabled: false
+            tokenGenerationOnCreationEnabled: false
+            usageStatisticsEnabled: true
+          globalJobDslSecurityConfiguration:
+            useScriptSecurity: true
+          sSHD:
+            port: -1
+        unclassified:
+          ansiColorBuildWrapper:
+            colorMaps:
+            - black: "#000000"
+              blackB: "#4C4C4C"
+              blue: "#1E90FF"
+              blueB: "#4682B4"
+              cyan: "#00CDCD"
+              cyanB: "#00FFFF"
+              green: "#00CD00"
+              greenB: "#00FF00"
+              magenta: "#CD00CD"
+              magentaB: "#FF00FF"
+              name: "xterm"
+              red: "#CD0000"
+              redB: "#FF0000"
+              white: "#E5E5E5"
+              whiteB: "#FFFFFF"
+              yellow: "#CDCD00"
+              yellowB: "#FFFF00"
+            - black: "#000000"
+              blackB: "#555555"
+              blue: "#0000AA"
+              blueB: "#5555FF"
+              cyan: "#00AAAA"
+              cyanB: "#55FFFF"
+              defaultBackground: 0
+              defaultForeground: 7
+              green: "#00AA00"
+              greenB: "#55FF55"
+              magenta: "#AA00AA"
+              magentaB: "#FF55FF"
+              name: "vga"
+              red: "#AA0000"
+              redB: "#FF5555"
+              white: "#AAAAAA"
+              whiteB: "#FFFFFF"
+              yellow: "#AA5500"
+              yellowB: "#FFFF55"
+            - black: "black"
+              blackB: "black"
+              blue: "blue"
+              blueB: "blue"
+              cyan: "cyan"
+              cyanB: "cyan"
+              green: "green"
+              greenB: "green"
+              magenta: "magenta"
+              magentaB: "magenta"
+              name: "css"
+              red: "red"
+              redB: "red"
+              white: "white"
+              whiteB: "white"
+              yellow: "yellow"
+              yellowB: "yellow"
+            - black: "#2E3436"
+              blackB: "#2E3436"
+              blue: "#3465A4"
+              blueB: "#3465A4"
+              cyan: "#06989A"
+              cyanB: "#06989A"
+              defaultBackground: 0
+              defaultForeground: 7
+              green: "#4E9A06"
+              greenB: "#4E9A06"
+              magenta: "#75507B"
+              magentaB: "#75507B"
+              name: "gnome-terminal"
+              red: "#CC0000"
+              redB: "#CC0000"
+              white: "#D3D7CF"
+              whiteB: "#D3D7CF"
+              yellow: "#C4A000"
+              yellowB: "#C4A000"
+          bitbucketEndpointConfiguration:
+            endpoints:
+            - bitbucketCloudEndpoint:
+                enableCache: false
+                manageHooks: false
+                repositoriesCacheDuration: 0
+                teamCacheDuration: 0
+          buildDiscarders:
+            configuredBuildDiscarders:
+            - "jobBuildDiscarder"
+          fingerprints:
+            fingerprintCleanupDisabled: false
+            storage: "file"
+          gitHubConfiguration:
+            apiRateLimitChecker: ThrottleForNormalize
+          gitHubPluginConfig:
+            hookUrl: "http://JENKINS_FQDN_VAR/github-webhook/"
+          gitLabConnectionConfig:
+            connections:
+            - apiTokenId: "gitlab-api-token"
+              clientBuilderId: "autodetect"
+              connectionTimeout: 10
+              ignoreCertificateErrors: false
+              name: "gitlab"
+              readTimeout: 10
+              url: "http://GITLAB_FQDN_VAR"
+            useAuthenticatedEndpoint: true
+          gitSCM:
+            addGitTagAction: false
+            allowSecondFetch: false
+            createAccountBasedOnEmail: false
+            disableGitToolChooser: false
+            hideCredentials: false
+            showEntireCommitSummaryInChanges: false
+            useExistingAccountWithSameEmail: false
+          globalLibraries:
+            libraries:
+            - name: "jenkins-shared-library"
+              retriever:
+                modernSCM:
+                  scm:
+                    git:
+                      credentialsId: "gitlab-ssh-key"
+                      id: "e1e4d731-75de-48d9-a36e-08f3076c65b1"
+                      remote: "git@GITLAB_FQDN_VAR:devops/jenkins-shared-library.git"
+                      traits:
+                      - "gitBranchDiscovery"
+          junitTestResultStorage:
+            storage: "file"
+          location:
+            adminAddress: "address not configured yet <nobody@nowhere>"
+            url: "http://JENKINS_FQDN_VAR/"
+          mailer:
+            charset: "UTF-8"
+            useSsl: false
+            useTls: false
+          pollSCM:
+            pollingThreadCount: 10
+          sonarGlobalConfiguration:
+            buildWrapperEnabled: false
+            installations:
+            - credentialsId: "sonarqube-api-token"
+              name: "sonarqube"
+              serverUrl: "http://SONARQUBE_FQDN_VAR"
+              triggers:
+                skipScmCause: false
+                skipUpstreamCause: false
+          timestamper:
+            allPipelines: false
+            elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+            systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+          whitelist:
+            enabled: false
+        tool:
+          git:
+            installations:
+            - home: "git"
+              name: "Default"
+          mavenGlobalConfig:
+            globalSettingsProvider: "standard"
+            settingsProvider: "standard"
+          sonarRunnerInstallation:
+            installations:
+            - name: "SonarScanner4.6"
+              properties:
+              - installSource:
+                  installers:
+                  - sonarRunnerInstaller:
+                      id: "4.6.2.2472"
+        jobs:
+          - script: >
+              pipelineJob("seed_job") {
+                  description("SeedJob Pipeline")
+                  keepDependencies(false)
+                  definition {
+                      cpsScm {
+                          scm {
+                              git {
+                                  remote {
+                                      url("git@GITLAB_FQDN_VAR:devops/cicd.git")
+                                      credentials("gitlab-ssh-key")
+                                  }
+                                  branch("master")
+                              }
+                          }
+                          scriptPath("SeedJob_Jenkinsfile")
+                      }
+                  }
+                  disabled(false)
+              }

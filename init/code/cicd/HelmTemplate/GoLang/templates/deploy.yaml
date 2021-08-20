@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.appname }}-{{ .Values.version }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.appname }}
+    project: {{ .Values.project }}
+    version: {{ .Values.version }}
+    build_tag: {{ .Values.build_tag }}
+    gitcommit: {{ .Values.gitcommit }}
+spec:
+  revisionHistoryLimit: 5
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appname }}
+  #minReadySeconds: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appname }}
+        version: {{ .Values.version }}
+    spec:
+      containers:
+      - name: {{ .Values.appname }}
+        image: {{ .Values.image.repository }}/{{ .Values.appname }}:{{ .Values.build_tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - name: http-httpapi
+          containerPort: 1001
+          protocol: TCP
+        - name: tcp-httpapi
+          containerPort: 9999
+          protocol: TCP
+        - name: grpc-grpc-demo
+          containerPort: 10000
+          protocol: TCP
+
+      {{- with .Values.nodeSelector }} {{/* 判断是否存在参数，不存在则不渲染该参数，-为清除行首空格，nindent为对输出结果缩进指定数量空格 */}}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

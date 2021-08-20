@@ -1,0 +1,39 @@
+#!/usr/bin/bash
+# AWS连接信息，不定义则使用环境变量，定义则使用如下定义值
+export AWS_ACCESS_KEY_ID=xxxxxx
+export AWS_SECRET_ACCESS_KEY=xxxxxx
+export AWS_DEFAULT_REGION=ap-east-1
+export EKS_CLUSTER=jack-cluster
+
+# EFS文件系统的<file_system_id>
+file_system_id=fs-b7225f7a
+
+# gitlab镜像地址
+gitlab_image=216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/gitlab-ce:12.10.14-ce.0
+
+# gitlab root用户密码
+gitlab_root_password=root1234
+
+# gitlab暴露的domain
+gitlab_external_url=http://gitlab.demo.com
+
+# gitlab部署到的kubernetes namespace名称
+namespace=devops
+
+# gitlab的资源限制
+requests_cpu=1000m
+requests_mem=2048Mi
+limits_cpu=2000m
+limits_mem=4096Mi
+
+# gitlab连接postgresql参数
+gitlab_postgresql_db_host=gitlab-postgres.devops.svc.cluster.local
+gitlab_postgresql_db_database=gitlab
+gitlab_postgresql_db_username=postgres
+gitlab_postgresql_db_password=admin1234
+gitlab_postgresql_db_port=5432
+
+# gitlab连接redis参数
+# 注意：aws postgresql不能使用集群模式，也不需设置密码
+gitlab_redis_host=gitlab-redis.devops.svc.cluster.local
+gitlab_redis_port=6379

@@ -1,0 +1,15 @@
+## 程序用户名
+service_user=service
+
+## 命名空间
+namespace=devops
+
+## 程序用户名密码
+service_password=IkwSNV$32%29sjw
+
+## Gitlab service用户api token
+gitlab_api_token=p33McqT6NZrVxzeEmeCy
+
+## ssh公钥，上传到service用户
+ssh_public_key="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMFez1WfsLWYyFoW6cIe/ODn8oblloLwXjwaAvAsQ5exKD5Rat+Wo4njjWMHO48rNnMJcnpu2Au/Nd2kMFkbB2hJ/frlIAHbJuYsOCyKydKwJzSmtr8AHVAnr+TIvgpn+MCtOAXII0MssRY25UILwB5YvG+iJvYTkZACp51rRhsF3qAJAxPBFoNxUh8+HPhyXdWHFyN/ElmBQNH3V7V7FUc/FaiiRd8/ozh7YsoBjtC9/Rt9ahBBd7wtrzOQujpijA3BlJFoGs1R1ramLlyLT5NLz0yN1p6+4i3CCMUHs9oYvOYa6iXhbUF3KIY/YnejLgH3hDiyg0TvVJ0Hb5gqcx service"
+

@@ -1,0 +1,7 @@
+#!groovy
+@Library('jenkins-shared-library@dev') _
+
+Config_Pipeline {
+    // 指定项目仓库地址
+    GIT_REPO = 'http://11.0.0.200/poc/demo-spring-boot-config.git'
+}

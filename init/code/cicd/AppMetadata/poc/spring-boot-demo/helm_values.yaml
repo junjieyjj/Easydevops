@@ -1,0 +1,17 @@
+# 该文件的变量会覆盖默认default-value.yaml的值
+service:
+  type: ClusterIP
+ports:
+  - name: http
+    protocol: TCP
+    targetPort: 18081
+    port: 18081
+
+envs:
+  - name: JVM_OPTS
+    value: -Xms256m -Xmx256m -Xss256k
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1024Mi

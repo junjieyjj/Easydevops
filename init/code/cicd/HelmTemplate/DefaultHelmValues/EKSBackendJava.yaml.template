@@ -1,0 +1,52 @@
+#该文件存放通用公共变量 
+
+# 指镜像参数
+image:
+  repository: null
+  pullPolicy: Always
+  # pullPolicy: IfNotPresent
+
+# 匹配节点
+nodeSelector: {}
+
+# 卷挂载
+volumeMounts_global:
+ - name: logs
+   mountPath: /logs
+   emptyDir: "{}"
+
+# 默认端口
+service:
+  type: ClusterIP
+ports:
+  - name: http
+    protocol: TCP
+    targetPort: 18081
+    port: 18081
+
+# 发布副本数，值由系统环境变量替换
+replicaCount: ${REPLICA_COUNT}
+
+# 注入java相关环境变量，值由系统环境变量替换
+envs:
+  - name: SPRING_PROFILES_ACTIVE
+    value: ${ENV}
+  - name: JVM_OPTS
+    value: ${JVM_OPTS}
+  - name: APP_OPTS
+    value: ${APP_OPTS}
+
+# 资源限制，值由系统环境变量替换
+resources:
+  limits:
+    cpu: "${CPU_LIMIT}"
+    memory: ${MEM_LIMIT}Gi
+  requests:
+    cpu: "${CPU_REQUEST}"
+    memory: ${MEM_REQUEST}Gi
+
+# configmap环境变量
+configMap_env: "false"
+
+# configmap配置文件
+configMap_conf: "false"

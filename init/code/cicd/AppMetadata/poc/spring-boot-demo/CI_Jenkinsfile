@@ -1,0 +1,32 @@
+#!groovy
+@Library('jenkins-shared-library@master') _
+
+CI_Pipeline {
+    // 必填：项目组名
+    GROUP_NAME = 'poc'
+
+    // 必填：代码仓库地址
+    GIT_REPO = 'git@gitlab.demo.com:poc/spring-boot-demo.git'
+    
+    // 必填：代码类型（可选：java、go、nodejs、html、php）
+    CODE_TYPE = 'java'
+
+    // 必填：构建类型（可选：maven、npm、none）
+    BUILD_TYPE = 'maven'
+
+    //MAVEN_TYPE = 'maven_deploy'
+    //MAVEN_TYPE = 'maven_multi_module_package'
+    
+    // 非必填：NODEJS版本（可选：6、8、10、12、14，默认为10）
+    //NODEJS_VER = '12'
+
+    // 必填：制品类型（可选：image、file）
+    // 选择file类型时不会进行docker镜像构建，file类型用于发布到非K8s环境，如vm、对象存储等
+    // 当MAVEN_TYPE包含deploy字样时，将ARTIFACT_TYPE设置为null，此时不打镜像，也不打对制品文件进行打包，而是直接maven deploy
+    //ARTIFACT_TYPE = 'file'
+    ARTIFACT_TYPE = 'image'
+
+    // 指定项目使用的Dockerfile文件
+    //DOCKER_FILE = 'nginx.Dockerfile'
+    DOCKER_FILE = 'openjdk.Dockerfile'
+}

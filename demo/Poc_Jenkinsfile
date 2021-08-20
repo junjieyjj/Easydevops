@@ -1,0 +1,148 @@
+#!groovy
+@Library('jenkins-shared-library@master') _
+
+def call() {
+	def ci = """
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: jenkins-slave
+  labels:
+    role: slave
+spec:
+  containers:
+  - name: jnlp
+    image: 216059448262.dkr.ecr.ap-east-1.amazonaws.com/devops/jenkins-slave:centos
+    volumeMounts:
+    - mountPath: "/var/run/docker.sock"
+      name: "volume-0"
+      readOnly: false 
+    - mountPath: "/root/.docker"
+      name: "docker-cache"
+    - mountPath: "/root/.npm"
+      name: "volume-1"
+      readOnly: false
+      subPath: "jenkins-slave/npm_cache/npm"
+    - mountPath: "/root/.m2"
+      name: "volume-1"
+      readOnly: false
+      subPath: "jenkins-slave/maven_cache/m2"
+    - name: cache-jacoco-maven-plugin
+      mountPath: /root/.m2/repository/org/jacoco/jacoco-maven-plugin
+    workingDir: /tmp
+    env:
+    - name: "JENKINS_AGENT_WORKDIR"
+      value: "/tmp"
+    imagePullPolicy: Always
+  volumes:
+  - hostPath:
+      path: "/var/run/docker.sock"
+    name: "volume-0"
+  - name: "volume-1"
+    persistentVolumeClaim:
+      claimName: "jenkins-slave-pvc"
+      readOnly: false
+  - emptyDir:
+      medium: ""
+    name: "workspace-volume"      
+  - name: cache-jacoco-maven-plugin
+    emptyDir: {}
+  - name: docker-cache
+    emptyDir: {}
+"""
+	return ci;
+}
+
+def a=call()
+
+pipeline {
+    agent {
+        kubernetes {
+          yaml a
+        }
+    }
+
+    stages {
+        stage('Checkout') { 
+            steps { 
+                script {
+                    Map scmVars = checkout([
+                        $class: 'GitSCM',
+                        userRemoteConfigs: [[url: "git@gitlab.demo.com:poc/spring-boot-demo.git", credentialsId: "gitlab-ssh-key"]],
+                        branches: [[name: "master"]],
+                        extensions: [[$class: 'CheckoutOption', timeout: 30], [$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]],
+                        submoduleCfg: [],
+                        doGenerateSubmoduleConfigurations: false
+                        ])
+                    println scmVars
+                }
+            }
+        }
+        
+        stage('Build') { 
+            steps { 
+                script {
+                    def mvn_settings = libraryResource 'maven_settings/mvn_settings.xml'
+                    writeFile text: mvn_settings, file: "./mvn_settings.xml", encoding: "UTF-8"
+                    
+                    sh 'mvn -T 1C -e -B -U -s ./mvn_settings.xml -Dmaven.test.skip=true clean package'
+                    sh 'ls -lrt ./target'
+                }
+            }
+        }
+        
+        stage('Unit Test') {
+            steps {
+                sh 'mvn -s ./mvn_settings.xml test -Dmaven.test.failure.ignore=true' 
+                sh 'ls -lrt ./target'
+                sh 'mvn -s ./mvn_settings.xml org.jacoco:jacoco-maven-plugin:prepare-agent'
+                sh 'ls -lrt ./target'
+                sh 'ls -lrt'
+            }
+        }
+        
+        stage('Coverage') {
+            steps {
+                jacoco(
+                    execPattern: 'target/jacoco.exec',
+                    changeBuildStatus: true, 
+                    maximumLineCoverage: "70",
+                    minimumLineCoverage: "0"
+                )
+            }
+        }
+
+        stage('Scan'){
+            steps {
+                script{
+                    def scannerHome = tool(name: 'SonarScanner4.6', type: 'hudson.plugins.sonar.SonarRunnerInstallation')
+                    withSonarQubeEnv('sonarqube') { 
+                    //   sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=poc-spring-boot-demo -Dsonar.projectName=poc-spring-boot-demo"
+                    sh "mvn -s ./mvn_settings.xml -Dmaven.test.skip=true org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar -Dsonar.projectKey=poc-spring-boot-demo -Dsonar.projectName=poc-spring-boot-demo"
+                    
+                    }
+                    
+                }
+            }
+        }
+        
+        stage('Quality Gate'){
+            steps {
+                script{
+                    timeout(time: 1, unit: 'HOURS') {
+                        def qg = waitForQualityGate()
+                        if (qg.status != 'OK') {
+                          error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh 'echo Deploy stage ...' 
+            }
+        }
+    }
+}

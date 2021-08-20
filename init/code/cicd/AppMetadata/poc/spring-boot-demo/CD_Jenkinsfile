@@ -1,0 +1,13 @@
+#!groovy
+@Library('jenkins-shared-library@master') _
+
+CD_Pipeline {
+    // 必填：项目组名
+    GROUP_NAME = 'poc'
+    
+    // 发布类型（可选：k8s、k8s_helm3，待支持：alicloud_oss、aws_s3）
+    DEPLOY_TYPE = 'k8s'
+
+    // 指定项目发布使用的Helm模板
+    HELM_TEMPLATE = 'EKSBackendJava'
+}

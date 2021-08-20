@@ -1,0 +1,10 @@
+# EKS cluster name
+cluster_name=jack-test
+
+# namespace
+namespace=devops
+
+# devops compoment fqdn
+gitlab_fqdn='gitlab.demo.com'
+jenkins_fqdn='jenkins.demo.com'
+sonarqube_fqdn='sonarqube.demo.com'
